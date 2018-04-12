@@ -1,15 +1,36 @@
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.12'
+    id 'net.ltgt.apt' version '0.10'
+}
+
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
+def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
+
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        name 'drnaylor'
+        url 'http://repo.drnaylor.co.uk/artifactory/list/quickstart'
+    }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile 'net.dv8tion:JDA:3.6.0_354'
+    testCompile(group: 'junit', name: 'junit', version: '4.12')
+    compile('net.dv8tion:JDA:3.6.0_354')
+    compile('org.slf4j:slf4j-api:1.7.25')
+    compile('org.slf4j:slf4j-jdk14:1.7.25')
+    compileOnly('org.projectlombok:lombok:1.16.18')
+    apt('org.projectlombok:lombok:1.16.18')
+    compile('ninja.leaping.configurate:configurate-hocon:3.3')
+    compile('org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5')
+
+    compile('com.google.inject:guice:4.0')
+    compile(qsmlDep)
+    compile('io.github.lukehutch:fast-classpath-scanner')
 }
