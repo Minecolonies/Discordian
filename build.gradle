@@ -33,4 +33,6 @@ dependencies {
     compile('com.google.inject:guice:4.0')
     compile(qsmlDep)
     compile('io.github.lukehutch:fast-classpath-scanner')
+
+    compile('com.jagrosh:jda-utilities-command:2.1')
 }

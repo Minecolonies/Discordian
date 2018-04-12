@@ -2,6 +2,7 @@ package com.minecolonies.minecoloniesbot.qsml.modulespec;
 
 import com.google.inject.Inject;
 import com.minecolonies.minecoloniesbot.MinecoloniesBot;
+import com.minecolonies.minecoloniesbot.internal.BotCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -10,6 +11,7 @@ import uk.co.drnaylor.quickstart.Module;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,6 +73,29 @@ public abstract class StandardModule implements Module
           getStreamForModule(ListenerAdapter.class).collect(Collectors.toList()));
 
         enable();
+    }
+
+    @Override
+    public void postEnable()
+    {
+        List<Class<? extends BotCommand>> commandClasses = getStreamForModule(BotCommand.class).collect(Collectors.toList());
+
+        //Instantiate all the command classes.
+        commandClasses.forEach(clazz ->
+          {
+              try
+              {
+                  BotCommand command = minecoloniesBot.getInjector().getInstance(clazz);
+                  command.enable();
+                  minecoloniesBot.getClient().addCommand(command);
+              }
+              catch (Exception e)
+              {
+                  logger.error("Command init failed for: {} ", clazz.getPackage());
+                  logger.error("StackTrace: ", e);
+              }
+          }
+        );
     }
 
     /**

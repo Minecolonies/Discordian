@@ -2,6 +2,10 @@ package com.minecolonies.minecoloniesbot;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.jagrosh.jdautilities.command.CommandClient;
+import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.minecolonies.minecoloniesbot.modules.core.CoreModule;
+import com.minecolonies.minecoloniesbot.modules.core.config.CoreConfig;
 import com.minecolonies.minecoloniesbot.qsml.BaseConfig;
 import com.minecolonies.minecoloniesbot.qsml.BotLoggerProxy;
 import com.minecolonies.minecoloniesbot.qsml.BotModuleConstructor;
@@ -9,6 +13,9 @@ import com.minecolonies.minecoloniesbot.qsml.injectormodules.InjectorModule;
 import com.minecolonies.minecoloniesbot.qsml.injectormodules.SubInjectorModule;
 import lombok.Getter;
 import lombok.Setter;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -16,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.drnaylor.quickstart.modulecontainers.DiscoveryModuleContainer;
 
+import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,6 +63,18 @@ public class MinecoloniesBot
     private Injector injector;
 
     /**
+     * The JDA instance for our bot.
+     */
+    @Getter
+    private JDA jda;
+
+    /**
+     * Our command client for JDA.
+     */
+    @Getter
+    private CommandClient client;
+
+    /**
      * Our SubInjectorModule.
      */
     private final SubInjectorModule subInjector = new SubInjectorModule();
@@ -85,6 +105,43 @@ public class MinecoloniesBot
             logger.error("Modules Initialisation failed. Bot stopping. ", e);
             System.exit(1);
         }
+
+        /*try
+        {
+            jdaInit();
+        }
+        catch (Exception e)
+        {
+            logger.error("JDA Failed to initialise. Bot Stopping. ", e);
+            System.exit(1);
+        }*/
+
+    }
+
+    /**
+     * Initialises our Discord bot.
+     */
+    public void jdaInit() throws LoginException, InterruptedException
+    {
+        logger.info("JDA: getting CoreConfig.");
+
+        final CoreConfig coreConfig = (CoreConfig) configUtils.get(CoreModule.ID);
+
+        if (coreConfig == null)
+        {
+            throw new NullPointerException();
+        }
+
+        logger.info("JDA: Creating JDA instance.");
+
+        client = new CommandClientBuilder().setPrefix(coreConfig.commandPrefix)
+                   .setAlternativePrefix("MB~")
+                   .setOwnerId(coreConfig.ownerID)
+                   .build();
+
+        jda = new JDABuilder(AccountType.BOT).setToken(coreConfig.botToken).buildBlocking();
+
+        jda.addEventListener(client);
     }
 
     /**
