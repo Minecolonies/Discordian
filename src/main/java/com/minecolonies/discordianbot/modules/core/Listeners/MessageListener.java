@@ -1,10 +1,10 @@
-package com.minecolonies.minecoloniesbot.modules.core.Listeners;
+package com.minecolonies.discordianbot.modules.core.Listeners;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.minecolonies.minecoloniesbot.MinecoloniesBot;
-import com.minecolonies.minecoloniesbot.util.URLParameterStringBuilder;
+import com.minecolonies.discordianbot.DiscordianBot;
+import com.minecolonies.discordianbot.util.URLParameterStringBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -20,24 +20,24 @@ import java.util.Map;
 public class MessageListener extends ListenerAdapter
 {
 
-    private final MinecoloniesBot minecoloniesBot;
+    private final DiscordianBot discordianBot;
 
-    public MessageListener(final MinecoloniesBot minecoloniesBot)
+    public MessageListener(final DiscordianBot discordianBot)
     {
-        this.minecoloniesBot = minecoloniesBot;
-        this.minecoloniesBot.getLogger().info("MessageListener Started!");
+        this.discordianBot = discordianBot;
+        this.discordianBot.getLogger().info("MessageListener Started!");
     }
 
     @Override
     public void onMessageReceived(final MessageReceivedEvent event)
     {
-        minecoloniesBot.getLogger().info("Message Received: {}, {}", event.getAuthor().getId(), event.getMessage().getContentRaw());
+        discordianBot.getLogger().info("Message Received: {}, {}", event.getAuthor().getId(), event.getMessage().getContentRaw());
         if (event.getAuthor().getId().equals("315757273676906497"))
         {
 
             final String[] splitMessage = event.getMessage().getContentStripped().split(" ");
 
-            minecoloniesBot.getLogger().info("message split: " + Arrays.toString(splitMessage));
+            discordianBot.getLogger().info("message split: " + Arrays.toString(splitMessage));
 
             if (splitMessage[0].equalsIgnoreCase("!test"))
             {
@@ -99,7 +99,7 @@ public class MessageListener extends ListenerAdapter
 
                     final JsonArray jsonArray = jsonParser.parse(response.toString()).getAsJsonArray();
 
-                    minecoloniesBot.getLogger().info(jsonArray.get(0).getAsJsonArray().toString());
+                    discordianBot.getLogger().info(jsonArray.get(0).getAsJsonArray().toString());
 
                     StringBuilder translationStringBuilder = new StringBuilder();
 
@@ -117,7 +117,7 @@ public class MessageListener extends ListenerAdapter
                 catch (Exception e)
                 {
                     event.getMessage().getChannel().sendMessage("Bot Errored. Check Logs.").submit();
-                    minecoloniesBot.getLogger().error("Translation Crash: ", e);
+                    discordianBot.getLogger().error("Translation Crash: ", e);
                 }
             }
         }

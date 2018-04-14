@@ -1,8 +1,8 @@
-package com.minecolonies.minecoloniesbot.qsml.modulespec;
+package com.minecolonies.discordianbot.qsml.modulespec;
 
 import com.google.inject.Inject;
-import com.minecolonies.minecoloniesbot.MinecoloniesBot;
-import com.minecolonies.minecoloniesbot.internal.BotCommand;
+import com.minecolonies.discordianbot.DiscordianBot;
+import com.minecolonies.discordianbot.internal.BotCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -21,11 +21,11 @@ import java.util.stream.Stream;
 public abstract class StandardModule implements Module
 {
     /**
-     * Our injected value of the {@link MinecoloniesBot} instance.
+     * Our injected value of the {@link DiscordianBot} instance.
      */
     @Inject
     @Getter(AccessLevel.PROTECTED)
-    private MinecoloniesBot minecoloniesBot;
+    private DiscordianBot discordianBot;
 
     /**
      * This module's ID.
@@ -66,9 +66,9 @@ public abstract class StandardModule implements Module
     {
         //because i can:
 
-        this.logger = getMinecoloniesBot().getLogger();
+        this.logger = this.getDiscordianBot().getLogger();
 
-        minecoloniesBot.getLogger().info("Discord Listener classes in {}: {}",
+        discordianBot.getLogger().info("Discord Listener classes in {}: {}",
           modulePackage,
           getStreamForModule(ListenerAdapter.class).collect(Collectors.toList()));
 
@@ -85,9 +85,9 @@ public abstract class StandardModule implements Module
           {
               try
               {
-                  BotCommand command = minecoloniesBot.getInjector().getInstance(clazz);
+                  BotCommand command = discordianBot.getInjector().getInstance(clazz);
                   command.enable();
-                  minecoloniesBot.getClient().addCommand(command);
+                  discordianBot.getClient().addCommand(command);
               }
               catch (Exception e)
               {
@@ -113,7 +113,7 @@ public abstract class StandardModule implements Module
     @SuppressWarnings("unchecked")
     private <T> Stream<Class<? extends T>> getStreamForModule(Class<T> assignableClass)
     {
-        return minecoloniesBot.getModuleContainer().getLoadedClasses().stream()
+        return discordianBot.getModuleContainer().getLoadedClasses().stream()
                  .filter(assignableClass::isAssignableFrom)
                  .filter(x -> x.getPackage().getName().startsWith(modulePackage))
                  .filter(x -> !Modifier.isAbstract(x.getModifiers()) && !Modifier.isInterface(x.getModifiers()))

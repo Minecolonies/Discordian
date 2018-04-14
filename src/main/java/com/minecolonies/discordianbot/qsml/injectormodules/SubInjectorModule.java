@@ -1,4 +1,4 @@
-package com.minecolonies.minecoloniesbot.qsml.injectormodules;
+package com.minecolonies.discordianbot.qsml.injectormodules;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;

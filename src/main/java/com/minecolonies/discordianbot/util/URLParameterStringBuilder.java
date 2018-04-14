@@ -1,4 +1,4 @@
-package com.minecolonies.minecoloniesbot.util;
+package com.minecolonies.discordianbot.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

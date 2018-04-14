@@ -1,4 +1,4 @@
-package com.minecolonies.minecoloniesbot.qsml.modulespec;
+package com.minecolonies.discordianbot.qsml.modulespec;
 
 import lombok.Getter;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -31,7 +31,7 @@ public abstract class ConfigurableModule<T extends AbstractConfigAdapter<?>> ext
     public final void preEnable()
     {
         // This line shouldn't need a cast, but thanks to Java's type erasure, we need it.
-        this.getMinecoloniesBot().addToSubInjectorModule((Class<T>) adapter.getClass(), () -> adapter);
+        this.getDiscordianBot().addToSubInjectorModule((Class<T>) adapter.getClass(), () -> adapter);
     }
 
     /**

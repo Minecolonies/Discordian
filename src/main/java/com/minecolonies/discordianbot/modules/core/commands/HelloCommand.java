@@ -1,18 +1,18 @@
-package com.minecolonies.minecoloniesbot.modules.core.commands;
+package com.minecolonies.discordianbot.modules.core.commands;
 
 import com.google.inject.Inject;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.minecolonies.minecoloniesbot.MinecoloniesBot;
-import com.minecolonies.minecoloniesbot.internal.BotCommand;
+import com.minecolonies.discordianbot.DiscordianBot;
+import com.minecolonies.discordianbot.internal.BotCommand;
 
 public class HelloCommand extends BotCommand
 {
 
     /**
-     * Our injected value of the {@link MinecoloniesBot} instance.
+     * Our injected value of the {@link DiscordianBot} instance.
      */
     @Inject
-    private MinecoloniesBot minecoloniesBot;
+    private DiscordianBot discordianBot;
 
     @Override
     public void enable()

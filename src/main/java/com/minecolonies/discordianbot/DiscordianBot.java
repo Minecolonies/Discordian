@@ -1,16 +1,16 @@
-package com.minecolonies.minecoloniesbot;
+package com.minecolonies.discordianbot;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.minecolonies.minecoloniesbot.modules.core.CoreModule;
-import com.minecolonies.minecoloniesbot.modules.core.config.CoreConfig;
-import com.minecolonies.minecoloniesbot.qsml.BaseConfig;
-import com.minecolonies.minecoloniesbot.qsml.BotLoggerProxy;
-import com.minecolonies.minecoloniesbot.qsml.BotModuleConstructor;
-import com.minecolonies.minecoloniesbot.qsml.injectormodules.InjectorModule;
-import com.minecolonies.minecoloniesbot.qsml.injectormodules.SubInjectorModule;
+import com.minecolonies.discordianbot.modules.core.CoreModule;
+import com.minecolonies.discordianbot.modules.core.config.CoreConfig;
+import com.minecolonies.discordianbot.qsml.BaseConfig;
+import com.minecolonies.discordianbot.qsml.BotLoggerProxy;
+import com.minecolonies.discordianbot.qsml.BotModuleConstructor;
+import com.minecolonies.discordianbot.qsml.injectormodules.InjectorModule;
+import com.minecolonies.discordianbot.qsml.injectormodules.SubInjectorModule;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 /**
  * Our bot's main class. Used for init of QSML modules, and main entry point.
  */
-public class MinecoloniesBot
+public class DiscordianBot
 {
 
     /**
@@ -86,15 +86,15 @@ public class MinecoloniesBot
      */
     public static void main(String[] args)
     {
-        new MinecoloniesBot();
+        new DiscordianBot();
     }
 
     /**
      * The constructor for our bot.
      */
-    private MinecoloniesBot()
+    private DiscordianBot()
     {
-        logger = LoggerFactory.getLogger(MinecoloniesBot.class);
+        logger = LoggerFactory.getLogger(DiscordianBot.class);
 
         try
         {
@@ -105,17 +105,6 @@ public class MinecoloniesBot
             logger.error("Modules Initialisation failed. Bot stopping. ", e);
             System.exit(1);
         }
-
-        /*try
-        {
-            jdaInit();
-        }
-        catch (Exception e)
-        {
-            logger.error("JDA Failed to initialise. Bot Stopping. ", e);
-            System.exit(1);
-        }*/
-
     }
 
     /**
@@ -171,7 +160,7 @@ public class MinecoloniesBot
 
         logger.info("Modules: Build phase.");
         this.moduleContainer = DiscoveryModuleContainer.builder()
-                                 .setPackageToScan("com.minecolonies.minecoloniesbot.modules") // Where are modules are held.
+                                 .setPackageToScan("com.minecolonies.discordianbot.modules") // Where are modules are held.
                                  .setLoggerProxy(new BotLoggerProxy(logger)) // Proxy for modules to use our bot's logger.
                                  .setConstructor(new BotModuleConstructor(this)) // How we construct modules.
                                  .setConfigurationLoader(loader) // Our configuration loader for our module's configs.

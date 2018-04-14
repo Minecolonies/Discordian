@@ -1,4 +1,4 @@
-package com.minecolonies.minecoloniesbot.qsml;
+package com.minecolonies.discordianbot.qsml;
 
 import org.slf4j.Logger;
 import uk.co.drnaylor.quickstart.LoggerProxy;

@@ -1,4 +1,4 @@
-package com.minecolonies.minecoloniesbot.qsml;
+package com.minecolonies.discordianbot.qsml;
 
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;

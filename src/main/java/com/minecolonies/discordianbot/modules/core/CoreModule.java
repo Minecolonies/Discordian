@@ -1,7 +1,7 @@
-package com.minecolonies.minecoloniesbot.modules.core;
+package com.minecolonies.discordianbot.modules.core;
 
-import com.minecolonies.minecoloniesbot.modules.core.config.CoreConfigAdapter;
-import com.minecolonies.minecoloniesbot.qsml.modulespec.ConfigurableModule;
+import com.minecolonies.discordianbot.modules.core.config.CoreConfigAdapter;
+import com.minecolonies.discordianbot.qsml.modulespec.ConfigurableModule;
 import lombok.Getter;
 import net.dv8tion.jda.core.JDA;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
@@ -28,7 +28,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
         super.onEnable();
         try
         {
-            getMinecoloniesBot().jdaInit();
+            this.getDiscordianBot().jdaInit();
         }
         catch (Exception e)
         {
@@ -41,7 +41,7 @@ public class CoreModule extends ConfigurableModule<CoreConfigAdapter>
     public void enable()
     {
         super.enable();
-        getMinecoloniesBot().getConfigUtils().put(ID, getAdapter().getNodeOrDefault());
+        this.getDiscordianBot().getConfigUtils().put(ID, getAdapter().getNodeOrDefault());
     }
 
     @Override

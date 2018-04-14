@@ -1,6 +1,6 @@
-package com.minecolonies.minecoloniesbot.qsml;
+package com.minecolonies.discordianbot.qsml;
 
-import com.minecolonies.minecoloniesbot.MinecoloniesBot;
+import com.minecolonies.discordianbot.DiscordianBot;
 import uk.co.drnaylor.quickstart.Module;
 import uk.co.drnaylor.quickstart.loaders.ModuleConstructor;
 
@@ -12,21 +12,21 @@ public class BotModuleConstructor implements ModuleConstructor
     /**
      * Our bot's instance.
      */
-    private final MinecoloniesBot minecoloniesBot;
+    private final DiscordianBot discordianBot;
 
     /**
      * The constructor for our {@link BotModuleConstructor}.
      *
-     * @param minecoloniesBot our bot's instance.
+     * @param discordianBot our bot's instance.
      */
-    public BotModuleConstructor(MinecoloniesBot minecoloniesBot)
+    public BotModuleConstructor(DiscordianBot discordianBot)
     {
-        this.minecoloniesBot = minecoloniesBot;
+        this.discordianBot = discordianBot;
     }
 
     @Override
     public Module constructModule(Class<? extends Module> moduleClass)
     {
-        return minecoloniesBot.getInjector().getInstance(moduleClass);
+        return discordianBot.getInjector().getInstance(moduleClass);
     }
 }
