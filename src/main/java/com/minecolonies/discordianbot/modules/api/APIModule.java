@@ -32,7 +32,7 @@ public class APIModule extends ConfigurableModule<APIConfigAdapter>
 
         try
         {
-            apiURL = new URL("https://localhost/hubs/discordian");
+            apiURL = new URL("http://localhost/hubs/discordian");
         }
         catch (MalformedURLException e)
         {
@@ -62,6 +62,11 @@ public class APIModule extends ConfigurableModule<APIConfigAdapter>
 
             getDiscordianBot().getJda().addEventListener(new MessageListener(getDiscordianBot()));
         }
+    }
+
+    private void messageHandler(IDiscordianConnectMessage message)
+    {
+        getLogger().info("message! {}", Arrays.toString(message.getArguments()));
     }
 
     private void errorHandler(Throwable thrown)

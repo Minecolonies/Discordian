@@ -60,7 +60,7 @@ dependencies {
             type = 'jar'
         }
         artifact {
-            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version
+            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-all'
             type = 'jar'
         }
     }
