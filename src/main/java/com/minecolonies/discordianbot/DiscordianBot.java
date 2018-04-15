@@ -11,6 +11,7 @@ import com.minecolonies.discordianbot.qsml.BotLoggerProxy;
 import com.minecolonies.discordianbot.qsml.BotModuleConstructor;
 import com.minecolonies.discordianbot.qsml.injectormodules.InjectorModule;
 import com.minecolonies.discordianbot.qsml.injectormodules.SubInjectorModule;
+import com.minecolonies.discordianconnect.api.connection.IDiscordianConnectConnection;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
@@ -19,6 +20,7 @@ import net.dv8tion.jda.core.JDABuilder;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.drnaylor.quickstart.modulecontainers.DiscoveryModuleContainer;
@@ -78,6 +80,14 @@ public class DiscordianBot
      * Our SubInjectorModule.
      */
     private final SubInjectorModule subInjector = new SubInjectorModule();
+
+    /**
+     * Our API Connection (Set by the {@link com.minecolonies.discordianbot.modules.api.APIModule})
+     */
+    @Nullable
+    @Getter
+    @Setter
+    private IDiscordianConnectConnection connection = null;
 
     /**
      * The start point for our bot.

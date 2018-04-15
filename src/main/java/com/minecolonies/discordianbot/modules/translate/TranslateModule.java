@@ -7,8 +7,7 @@ import uk.co.drnaylor.quickstart.annotations.ModuleData;
  * Translate module for our bot.
  */
 @ModuleData(id = TranslateModule.ID,
-  name = "Translate",
-  isRequired = true)
+  name = "Translate")
 public class TranslateModule extends StandardModule
 {
     /**
