@@ -30,4 +30,4 @@
 *.nb-gradle-properties
 
 .DS_Store
-config/
+/config/
