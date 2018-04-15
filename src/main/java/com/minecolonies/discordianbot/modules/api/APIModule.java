@@ -7,7 +7,6 @@ import com.minecolonies.discordianconnect.DiscordianConnectAPI;
 import com.minecolonies.discordianconnect.api.connection.IDiscordianConnectConnection;
 import com.minecolonies.discordianconnect.api.connection.auth.IDiscordianConnectAuthenticationBuilder;
 import com.minecolonies.discordianconnect.api.message.IDiscordianConnectMessage;
-import lombok.Getter;
 import uk.co.drnaylor.quickstart.annotations.ModuleData;
 
 import java.net.MalformedURLException;
