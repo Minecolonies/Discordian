@@ -4,6 +4,7 @@ import com.minecolonies.discordianbot.modules.api.config.APIConfig;
 import com.minecolonies.discordianbot.modules.api.config.APIConfigAdapter;
 import com.minecolonies.discordianbot.qsml.modulespec.ConfigurableModule;
 import com.minecolonies.discordianconnect.DiscordianConnectAPI;
+import com.minecolonies.discordianconnect.api.connection.ConnectionState;
 import com.minecolonies.discordianconnect.api.connection.IDiscordianConnectConnection;
 import com.minecolonies.discordianconnect.api.connection.auth.IDiscordianConnectAuthenticationBuilder;
 import com.minecolonies.discordianconnect.api.message.IDiscordianConnectMessage;
@@ -57,7 +58,6 @@ public class APIModule extends ConfigurableModule<APIConfigAdapter>
 
             connection.connect();
             getDiscordianBot().setConnection(connection);
-            connection.send("MinecraftChatMessage",  123, "abc", "Door Ray Meeee", apiURL);
 
             getDiscordianBot().getJda().addEventListener(new MessageListener(getDiscordianBot()));
         }

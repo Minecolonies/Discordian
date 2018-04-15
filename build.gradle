@@ -32,16 +32,16 @@ sourceSets {
 }
 
 repositories {
+    ivy {
+        name 'Minecolonies TeamCity Repo'
+        ivyPattern 'http://teamcity.minecolonies.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'
+        artifactPattern 'http://teamcity.minecolonies.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'
+    }
     mavenCentral()
     jcenter()
     maven {
         name 'drnaylor'
         url 'http://repo.drnaylor.co.uk/artifactory/list/quickstart'
-    }
-    ivy {
-        name 'Minecolonies TeamCity Repo'
-        ivyPattern 'http://teamcity.minecolonies.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'
-        artifactPattern 'http://teamcity.minecolonies.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'
     }
 }
 
@@ -53,7 +53,6 @@ dependencies {
     compile('org.slf4j:slf4j-api:1.7.25')
     compile('org.slf4j:slf4j-jdk14:1.7.25')
     compileOnly('org.projectlombok:lombok:1.16.18')
-    apt('org.projectlombok:lombok:1.16.18')
     compile('ninja.leaping.configurate:configurate-hocon:3.3')
     compile('org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5')
 
@@ -67,11 +66,11 @@ dependencies {
 
     compile ('org:DiscordianConnect_Release:' + config.discordian_connect_version) {
         artifact {
-            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-sources'
+            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-all'
             type = 'jar'
         }
         artifact {
-            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-all'
+            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-sources'
             type = 'jar'
         }
     }
