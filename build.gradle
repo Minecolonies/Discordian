@@ -50,6 +50,7 @@ dependencies {
 
     testCompile(group: 'junit', name: 'junit', version: '4.12')
     compile('net.dv8tion:JDA:3.6.0_354')
+
     compile('org.slf4j:slf4j-api:1.7.25')
     compile('org.slf4j:slf4j-jdk14:1.7.25')
     compileOnly('org.projectlombok:lombok:1.16.18')

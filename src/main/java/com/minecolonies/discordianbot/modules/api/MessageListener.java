@@ -24,13 +24,13 @@ public class MessageListener extends ListenerAdapter
         IDiscordianConnectConnection connection = discordianBot.getConnection();
 
         if (connection != null
-              && event.getChannel().getId().equalsIgnoreCase("377078011394260994")
-              && connection.getConnectionState() == ConnectionState.OPEN)
+              && connection.getConnectionState() == ConnectionState.OPEN
+              && !event.getAuthor().isBot())
         {
-            discordianBot.getLogger().info("Listener: {}", event.getMessage().getContentStripped());
-            connection.send("DiscordChatMessage", event.getAuthor().getName(), event.getChannel().getId(), event.getMessage().getContentStripped()); //, event.getChannel().getId()
+            if (event.getChannel().getId().equalsIgnoreCase("435017246830755841"))
+            {
+                connection.send("DiscordChatMessage", event.getChannel().getId(), event.getAuthor().getName(), event.getMessage().getContentStripped());
+            }
         }
-
     }
-
 }
