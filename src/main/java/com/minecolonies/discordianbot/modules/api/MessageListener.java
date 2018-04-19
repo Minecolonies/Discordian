@@ -27,10 +27,7 @@ public class MessageListener extends ListenerAdapter
               && connection.getConnectionState() == ConnectionState.OPEN
               && !event.getAuthor().isBot())
         {
-            if (event.getChannel().getId().equalsIgnoreCase("435017246830755841"))
-            {
-                connection.send("DiscordChatMessage", event.getChannel().getId(), event.getAuthor().getName(), event.getMessage().getContentStripped());
-            }
+            connection.send("GenericAnyDiscordChatMessage", event.getChannel().getId(), event.getAuthor().getName(), event.getMessage().getContentStripped());
         }
     }
 }

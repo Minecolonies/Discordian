@@ -52,15 +52,13 @@ public class APIModule extends ConfigurableModule<APIConfigAdapter>
 
                 builder.usingAuthentication(IDiscordianConnectAuthenticationBuilder::withNoAuthentication);
 
-                builder.withEventHandler(eventBuilder -> eventBuilder.registerMessageHandler("MinecraftGenericMessage", minecraftHandlers::genericMessage));
+                builder.withEventHandler(eventBuilder -> eventBuilder.registerMessageHandler("GenericDiscordMinecraftMessage", minecraftHandlers::genericMessage));
 
                 builder.withErrorHandler(errorBuilder -> errorBuilder.registerHandler(this::errorHandler));
             });
 
             connection.connect();
             getDiscordianBot().setConnection(connection);
-
-            getLogger().info("past");
 
             getDiscordianBot().getJda().addEventListener(new MessageListener(getDiscordianBot()));
         }
