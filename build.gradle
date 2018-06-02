@@ -1,24 +1,20 @@
 plugins {
     id 'io.franzbecker.gradle-lombok' version '1.12'
     id 'net.ltgt.apt' version '0.10'
+    id 'com.github.johnrengelman.shadow' version '2.0.3'
 }
 
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
+mainClassName = "com.minecolonies.chatchaindc.ChatChainDC"
+
 def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
-
-ext.configFile = file "build.properties"
-
-configFile.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
-}
 
 sourceSets {
     main {
@@ -66,14 +62,30 @@ dependencies {
 
     compile('com.jagrosh:jda-utilities-command:2.1')
 
-    compile ('org:DiscordianConnect_Release:' + config.discordian_connect_version) {
+    compile('org:ChatChainConnect_Release:' + chatChainConnectVersion) {
         artifact {
-            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-all'
+            name = 'chatchainconnect-0.0.1.' + chatChainConnectVersion + '-all'
             type = 'jar'
         }
         artifact {
-            name = 'discordianconnect-0.0.1.' + config.discordian_connect_version + '-sources'
+            name = 'chatchainconnect-0.0.1.' + chatChainConnectVersion + '-sources'
             type = 'jar'
         }
+    }
+}
+
+shadowJar {
+    baseName = 'ChatChainDC'
+    classifier = 'all'
+    version = '1.0'
+    configurations = [project.configurations.compile]
+    manifest {
+        attributes 'Main-Class': "com.minecolonies.chatchaindc.ChatChainDC"
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': "com.minecolonies.chatchaindc.ChatChainDC"
     }
 }
