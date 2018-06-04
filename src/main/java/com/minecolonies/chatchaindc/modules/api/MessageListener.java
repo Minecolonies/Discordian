@@ -1,5 +1,7 @@
 package com.minecolonies.chatchaindc.modules.api;
 
+import com.google.gson.Gson;
+import com.minecolonies.chatchainconnect.api.objects.User;
 import com.minecolonies.chatchaindc.ChatChainDC;
 import com.minecolonies.chatchaindc.modules.api.config.APIConfig;
 import com.minecolonies.chatchainconnect.api.connection.ConnectionState;
@@ -29,11 +31,16 @@ public class MessageListener extends ListenerAdapter
               && !event.getAuthor().isBot())
         {
             final APIConfig apiConfig = (APIConfig) chatChainDC.getConfigUtils().get(APIModule.ID);
+
+            final User user = new User();
+            user.setName(event.getAuthor().getName());
+            user.setAvatarURL(event.getAuthor().getAvatarUrl());
+
             connection.send("GenericMessageEvent",
               ChatChainDC.CLIENT_TYPE,
               apiConfig.clientName,
               event.getChannel().getId(),
-              event.getAuthor().getName(),
+              new Gson().toJson(user),
               event.getMessage().getContentStripped());
         }
     }

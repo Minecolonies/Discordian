@@ -1,5 +1,10 @@
 package com.minecolonies.chatchaindc.api.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.minecolonies.chatchainconnect.ChatChainConnectAPI;
+import com.minecolonies.chatchainconnect.api.objects.User;
 import com.minecolonies.chatchaindc.ChatChainDC;
 import com.minecolonies.chatchaindc.modules.api.APIModule;
 import com.minecolonies.chatchaindc.modules.api.config.APIConfig;
@@ -7,15 +12,22 @@ import com.minecolonies.chatchaindc.modules.api.config.ClientConfigs;
 import com.minecolonies.chatchaindc.util.SerializeUtils;
 import com.minecolonies.chatchainconnect.api.connection.ConnectionState;
 import com.minecolonies.chatchainconnect.api.message.IChatChainConnectMessage;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.requests.Request;
+import net.dv8tion.jda.core.requests.Route;
+import net.dv8tion.jda.webhook.WebhookClient;
+import net.dv8tion.jda.webhook.WebhookClientBuilder;
+import net.dv8tion.jda.webhook.WebhookMessage;
+import net.dv8tion.jda.webhook.WebhookMessageBuilder;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Handlers for all our generic API messages.
@@ -107,19 +119,67 @@ public class GenericHandlers
 
     public void genericMessageEvent(final IChatChainConnectMessage message)
     {
+        for (final JsonElement element : message.getArguments())
+        {
+            chatChainDC.getLogger().info("Message" + element);
+        }
         final String clientType = message.getArguments()[0].getAsString();
         final String clientName = message.getArguments()[1].getAsString();
         final String channelName = message.getArguments()[2].getAsString();
-        final String user = message.getArguments()[3].getAsString();
+        final User user = new Gson().fromJson(message.getArguments()[3], User.class);
         final String sentMessage = message.getArguments()[4].getAsString();
 
-        final Message discordMessage = new MessageBuilder((chatChainDC.getReplacementsUtil().genericMessage(clientType,
-          clientName,
-          channelName,
-          user,
-          sentMessage))).build();
+        if (chatChainDC.getClientConfigs().clientConfigs.containsKey(clientName)
+              && chatChainDC.getJda() != null
+              && chatChainDC.getClientConfigs().clientTypesConfig.containsKey(clientType)
+              && chatChainDC.getClientConfigs().clientTypesConfig.get(clientType)
+              && clientType.equalsIgnoreCase("ChatChainMC"))
+        {
+            ClientConfigs.ClientConfig clientConfig = chatChainDC.getClientConfigs().clientConfigs.get(clientName);
+            if (clientConfig.display)
+                for (final String channel : clientConfig.channels.keySet())
+                {
+                    if (clientConfig.channels.get(channel).contains(channelName.toLowerCase()))
+                    {
+                        try
+                        {
+                            final List<Webhook> webhooks = chatChainDC.getJda().getTextChannelById(channel).getWebhooks().submit().get();
+                            for (final Webhook webhook : webhooks)
+                            {
+                                if (webhook.getName().equals("Test Webhook"))
+                                {
+                                    final WebhookClientBuilder builder = webhook.newClient();
+                                    final WebhookClient webhookClient = builder.build();
 
-        sendMessage(clientType, clientName, channelName, discordMessage);
+                                    final WebhookMessage webhookMessage = new WebhookMessageBuilder()
+                                                                            .setUsername(user.getName())
+                                                                            //"https://crafatar.com/avatars/2abe5404-4a2f-4e30-b3ff-671696227a90"
+                                                                            .setAvatarUrl(user.getAvatarURL())
+                                                                            .setContent(sentMessage)
+                                                                            .build();
+
+                                    webhookClient.send(webhookMessage);
+                                }
+                            }
+                        }
+                        catch (InterruptedException | ExecutionException e)
+                        {
+                            chatChainDC.getLogger().error("Could not get webHooks for channel ", channel);
+                            chatChainDC.getLogger().error("Stack Trace: ", e);
+                        }
+                    }
+                }
+        }
+        else
+        {
+            final Message discordMessage = new MessageBuilder((chatChainDC.getReplacementsUtil().genericMessage(clientType,
+              clientName,
+              channelName,
+              user.getName(),
+              sentMessage))).build();
+
+            sendMessage(clientType, clientName, channelName, discordMessage);
+        }
     }
 
     public void genericJoinEvent(final IChatChainConnectMessage message)
@@ -127,12 +187,12 @@ public class GenericHandlers
         final String clientType = message.getArguments()[0].getAsString();
         final String clientName = message.getArguments()[1].getAsString();
         final String channelName = message.getArguments()[2].getAsString();
-        final String user = message.getArguments()[3].getAsString();
+        final User user = new Gson().fromJson(message.getArguments()[3], User.class);
 
         final Message discordMessage = new MessageBuilder(chatChainDC.getReplacementsUtil().genericJoin(clientType,
           clientName,
           channelName,
-          user)).build();
+          user.getName())).build();
 
         sendMessage(clientType, clientName, channelName, discordMessage);
     }
@@ -142,12 +202,12 @@ public class GenericHandlers
         final String clientType = message.getArguments()[0].getAsString();
         final String clientName = message.getArguments()[1].getAsString();
         final String channelName = message.getArguments()[2].getAsString();
-        final String user = message.getArguments()[3].getAsString();
+        final User user = new Gson().fromJson(message.getArguments()[3], User.class);
 
         final Message discordMessage = new MessageBuilder(chatChainDC.getReplacementsUtil().genericLeave(clientType,
           clientName,
           channelName,
-          user)).build();
+          user.getName())).build();
 
         sendMessage(clientType, clientName, channelName, discordMessage);
     }

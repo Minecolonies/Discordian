@@ -250,27 +250,6 @@ public class ChatChainDC
             connection.connect(() -> connection.send("GenericConnectionEvent", CLIENT_TYPE, apiConfig.clientName, "discord"));
             setConnection(connection);
 
-            /*while (connection.getConnectionState() != ConnectionState.OPEN)
-            {
-                if (connection.getConnectionState().equals(ConnectionState.CLOSED))
-                {
-                    logger.error("Could not connect!!");
-                    break;
-                }
-
-                try
-                {
-                    wait(1);
-                }
-                catch (Exception e)
-                {
-                    logger.info("wait failed", e);
-                }
-            }
-
-            final APIConfig apiConfig = (APIConfig) getConfigUtils().get(APIModule.ID);
-            connection.send("GenericConnectionEvent", CLIENT_TYPE, apiConfig.clientName, "discord");*/
-
             jda.addEventListener(new MessageListener(this));
         }
     }
