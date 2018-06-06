@@ -28,7 +28,7 @@ public class MessageListener extends ListenerAdapter
 
         if (connection != null
               && connection.getConnectionState() == ConnectionState.OPEN
-              && !event.getAuthor().isBot())
+              &&  event.getMember() != null)
         {
             final APIConfig apiConfig = (APIConfig) chatChainDC.getConfigUtils().get(APIModule.ID);
 

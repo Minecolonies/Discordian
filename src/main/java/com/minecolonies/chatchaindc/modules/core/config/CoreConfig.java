@@ -18,4 +18,7 @@ public class CoreConfig extends BaseConfig
 
     @Setting(value = "owner-id", comment = "Used to identify the owner of the bot, use your SnowFlake ID (Non-negative long)")
     public String ownerID = "owner id here please";
+
+    @Setting(value = "webhook-name")
+    public String webhookName = "name you set the webhook in your channels";
 }

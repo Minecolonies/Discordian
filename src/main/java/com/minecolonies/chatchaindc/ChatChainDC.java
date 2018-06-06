@@ -30,7 +30,7 @@ import net.dv8tion.jda.core.JDABuilder;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.DefaultObjectMapperFactory;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -154,18 +154,18 @@ public class ChatChainDC
 
             if (!configDir.getParentFile().exists())
             {
-                getLogger().error("Cannot create Replacements.conf!", new IOException());
+                getLogger().error("Cannot create Replacements.json!", new IOException());
             }
         }
 
-        final Path replacementsConfigPath = configDir.toPath().resolve("replacements.conf");
-        final Path clientConfigsPath = configDir.toPath().resolve("clients.conf");
+        final Path replacementsConfigPath = configDir.toPath().resolve("replacements.json");
+        final Path clientConfigsPath = configDir.toPath().resolve("clients.json");
 
         replacementsConfig = getConfig(replacementsConfigPath, ReplacementsConfig.class,
-          HoconConfigurationLoader.builder().setPath(replacementsConfigPath).build());
+          GsonConfigurationLoader.builder().setPath(replacementsConfigPath).build());
 
         clientConfigs = getConfig(clientConfigsPath, ClientConfigs.class,
-          HoconConfigurationLoader.builder().setPath(clientConfigsPath).build());
+          GsonConfigurationLoader.builder().setPath(clientConfigsPath).build());
 
         try
         {
@@ -285,7 +285,7 @@ public class ChatChainDC
     {
         logger.info("Modules: Creating Config Loader");
 
-        final File file = new File(System.getProperty("user.dir") + "/config/config.conf");
+        final File file = new File(System.getProperty("user.dir") + "/config/config.json");
 
         logger.info("Modules: Creating New InjectorModule");
 
@@ -301,7 +301,7 @@ public class ChatChainDC
             }
         }
 
-        ConfigurationLoader<CommentedConfigurationNode> loader = HoconConfigurationLoader.builder().setPath(file.toPath()).build();
+        ConfigurationLoader<ConfigurationNode> loader = GsonConfigurationLoader.builder().setPath(file.toPath()).build();
 
         logger.info("Modules: Build phase.");
         this.moduleContainer = DiscoveryModuleContainer.builder()
