@@ -32,5 +32,4 @@ public class ClientConfigs extends BaseConfig
                                                  + "See client's wiki for list of their channelNames")
         public Map<String, List<String>> channels = new HashMap<>();
     }
-
 }

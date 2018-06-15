@@ -5,12 +5,15 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.minecolonies.chatchainconnect.ChatChainConnectAPI;
+import com.minecolonies.chatchainconnect.api.connection.IChatChainConnectConnection;
+import com.minecolonies.chatchainconnect.api.connection.auth.IChatChainConnectAuthenticationBuilder;
 import com.minecolonies.chatchaindc.api.handlers.GenericHandlers;
 import com.minecolonies.chatchaindc.modules.api.APIModule;
 import com.minecolonies.chatchaindc.modules.api.MessageListener;
 import com.minecolonies.chatchaindc.modules.api.config.APIConfig;
 import com.minecolonies.chatchaindc.modules.api.config.ClientConfigs;
-import com.minecolonies.chatchaindc.modules.api.config.ReplacementsConfig;
+import com.minecolonies.chatchaindc.modules.api.config.TemplatesConfig;
 import com.minecolonies.chatchaindc.modules.core.CoreModule;
 import com.minecolonies.chatchaindc.modules.core.config.CoreConfig;
 import com.minecolonies.chatchaindc.qsml.BaseConfig;
@@ -18,10 +21,7 @@ import com.minecolonies.chatchaindc.qsml.BotLoggerProxy;
 import com.minecolonies.chatchaindc.qsml.BotModuleConstructor;
 import com.minecolonies.chatchaindc.qsml.injectormodules.InjectorModule;
 import com.minecolonies.chatchaindc.qsml.injectormodules.SubInjectorModule;
-import com.minecolonies.chatchaindc.util.ReplacementsUtil;
-import com.minecolonies.chatchainconnect.ChatChainConnectAPI;
-import com.minecolonies.chatchainconnect.api.connection.IChatChainConnectConnection;
-import com.minecolonies.chatchainconnect.api.connection.auth.IChatChainConnectAuthenticationBuilder;
+import com.minecolonies.chatchaindc.util.TemplateMessages;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
@@ -29,7 +29,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.DefaultObjectMapperFactory;
@@ -110,10 +109,10 @@ public class ChatChainDC
     private IChatChainConnectConnection connection = null;
 
     /**
-     * Our ReplacementsConfig instance.
+     * Our TemplatesConfig instance.
      */
     @Getter
-    private final ReplacementsConfig replacementsConfig;
+    private final TemplatesConfig templatesConfig;
 
     /**
      * Our ClientConfigs instance.
@@ -122,10 +121,10 @@ public class ChatChainDC
     private ClientConfigs clientConfigs;
 
     /**
-     * Our ReplacementsUtil instance.
+     * Our TemplateMessages instance.
      */
     @Getter
-    private final ReplacementsUtil replacementsUtil;
+    private final TemplateMessages templateMessages;
 
     /**
      * The start point for our bot.
@@ -144,7 +143,7 @@ public class ChatChainDC
     {
         logger = LoggerFactory.getLogger(ChatChainDC.class);
 
-        replacementsUtil = new ReplacementsUtil(this);
+        templateMessages = new TemplateMessages(this);
 
         final File configDir = new File(System.getProperty("user.dir") + "/config/");
 
@@ -158,10 +157,10 @@ public class ChatChainDC
             }
         }
 
-        final Path replacementsConfigPath = configDir.toPath().resolve("replacements.json");
+        final Path replacementsConfigPath = configDir.toPath().resolve("templates.json");
         final Path clientConfigsPath = configDir.toPath().resolve("clients.json");
 
-        replacementsConfig = getConfig(replacementsConfigPath, ReplacementsConfig.class,
+        templatesConfig = getConfig(replacementsConfigPath, TemplatesConfig.class,
           GsonConfigurationLoader.builder().setPath(replacementsConfigPath).build());
 
         clientConfigs = getConfig(clientConfigsPath, ClientConfigs.class,

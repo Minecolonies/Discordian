@@ -1,6 +1,7 @@
 package com.minecolonies.chatchaindc.qsml;
 
 import com.google.common.reflect.TypeToken;
+import lombok.Getter;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -14,6 +15,7 @@ public class BaseConfig<T extends ConfigurationLoader<K>, K extends Configuratio
 {
 
     private T                     loader;
+    @Getter
     private K                     node;
     private TypeToken<BaseConfig> type;
 

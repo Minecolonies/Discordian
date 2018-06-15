@@ -93,8 +93,6 @@ public class GenericHandlers
       final User user,
       final String text)
     {
-        //final APIConfig apiConfig = (APIConfig) chatChainDC.getConfigUtils().get(APIModule.ID);
-
         if (text != null && text.equals(""))
         {
             return;
@@ -122,8 +120,6 @@ public class GenericHandlers
                     {
                         sendMessage(channel, message);
                     }
-
-                    //}
                 }
             }
         }
@@ -154,7 +150,7 @@ public class GenericHandlers
         final String clientName = message.getArguments()[1].getAsString();
         final String channelName = message.getArguments()[2].getAsString();
 
-        final Message discordMessage = new MessageBuilder(chatChainDC.getReplacementsUtil().genericConnection(clientType,
+        final Message discordMessage = new MessageBuilder(chatChainDC.getTemplateMessages().genericConnection(clientType,
           clientName,
           channelName)).build();
 
@@ -167,7 +163,7 @@ public class GenericHandlers
         final String clientName = message.getArguments()[1].getAsString();
         final String channelName = message.getArguments()[2].getAsString();
 
-        final Message discordMessage = new MessageBuilder(chatChainDC.getReplacementsUtil().genericDisconnection(clientType,
+        final Message discordMessage = new MessageBuilder(chatChainDC.getTemplateMessages().genericDisconnection(clientType,
           clientName,
           channelName)).build();
 
@@ -182,9 +178,7 @@ public class GenericHandlers
         final User user = User.fromJson(message.getArguments()[3]);
         final String sentMessage = message.getArguments()[4].getAsString();
 
-        chatChainDC.getLogger().info("ClientName " + clientName);
-
-        final Message discordMessage = new MessageBuilder((chatChainDC.getReplacementsUtil().genericMessage(clientType,
+        final Message discordMessage = new MessageBuilder((chatChainDC.getTemplateMessages().genericMessage(clientType,
           clientName,
           channelName,
           user.getName(),
@@ -200,7 +194,7 @@ public class GenericHandlers
         final String channelName = message.getArguments()[2].getAsString();
         final User user = User.fromJson(message.getArguments()[3]);
 
-        final Message discordMessage = new MessageBuilder(chatChainDC.getReplacementsUtil().genericJoin(clientType,
+        final Message discordMessage = new MessageBuilder(chatChainDC.getTemplateMessages().genericJoin(clientType,
           clientName,
           channelName,
           user.getName())).build();
@@ -215,7 +209,7 @@ public class GenericHandlers
         final String channelName = message.getArguments()[2].getAsString();
         final User user = User.fromJson(message.getArguments()[3]);
 
-        final Message discordMessage = new MessageBuilder(chatChainDC.getReplacementsUtil().genericLeave(clientType,
+        final Message discordMessage = new MessageBuilder(chatChainDC.getTemplateMessages().genericLeave(clientType,
           clientName,
           channelName,
           user.getName())).build();

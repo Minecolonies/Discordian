@@ -18,7 +18,7 @@ public class APIConfig extends BaseConfig
 
     @Setting(value = "api-hub", comment = "\nDO NOT TOUCH UNLESS YOU KNOW WHAT YOU'RE DOING \n "
                                             + "API hub url. please leave proceeding \"/\"")
-    public String apiHub = "/hubs/discordian";
+    public String apiHub = "/hubs/chatchain";
 
     @Setting(value = "client-name", comment = "\nName of this client, used in API")
     public String clientName = "ChatChainDC Client";

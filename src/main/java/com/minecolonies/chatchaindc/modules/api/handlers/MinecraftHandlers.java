@@ -1,9 +1,9 @@
 package com.minecolonies.chatchaindc.modules.api.handlers;
 
+import com.minecolonies.chatchainconnect.api.message.IChatChainConnectMessage;
 import com.minecolonies.chatchaindc.ChatChainDC;
 import com.minecolonies.chatchaindc.modules.api.APIModule;
 import com.minecolonies.chatchaindc.modules.api.config.APIConfig;
-import com.minecolonies.chatchainconnect.api.message.IChatChainConnectMessage;
 import org.slf4j.Logger;
 
 /**
