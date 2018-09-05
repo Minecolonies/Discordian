@@ -237,8 +237,6 @@ public class ChatChainDC
                     eventBuilder.registerMessageHandler("GenericMessageEvent", handlers::genericMessageEvent);
                     eventBuilder.registerMessageHandler("GenericJoinEvent", handlers::genericJoinEvent);
                     eventBuilder.registerMessageHandler("GenericLeaveEvent", handlers::genericLeaveEvent);
-                    eventBuilder.registerMessageHandler("RequestJoined", handlers::requestJoined);
-                    eventBuilder.registerMessageHandler("RespondJoined", handlers::respondJoined);
                 });
 
                 builder.withErrorHandler(errorBuilder -> errorBuilder.registerHandler(this::errorHandler));
