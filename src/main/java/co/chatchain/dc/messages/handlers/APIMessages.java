@@ -34,8 +34,7 @@ public class APIMessages
                     .replace(SENDING_CLIENT_NAME, message.getSendingClient().getClientName())
                     .replace(SENDING_CLIENT_GUID, message.getSendingClient().getClientGuid())
                     .replace(MESSAGE, message.getMessage());
-        }
-        else
+        } else
         {
             messageToSend = chatChainDC.getFormattingConfig().getDefaultGenericMessageFormat()
                     .replace(GROUP_NAME, message.getGroup().getGroupName())

@@ -42,8 +42,8 @@ public class GenericMessage
     /**
      * Initializes a new GenericMessage
      *
-     * @param group to which the message belongs.
-     * @param user which is sending the message
+     * @param group   to which the message belongs.
+     * @param user    which is sending the message
      * @param message that is being sent
      */
     public GenericMessage(final Group group, final User user, final String message, final boolean sendToSelf)

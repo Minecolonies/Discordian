@@ -4,15 +4,12 @@ import co.chatchain.dc.configs.AbstractConfig;
 import co.chatchain.dc.configs.FormattingConfig;
 import co.chatchain.dc.configs.GroupsConfig;
 import co.chatchain.dc.configs.MainConfig;
+import co.chatchain.dc.messages.handlers.APIMessages;
 import co.chatchain.dc.messages.handlers.JDAMessages;
+import co.chatchain.dc.messages.objects.GenericMessage;
 import com.google.common.reflect.TypeToken;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
-import com.microsoft.signalr.HubConnectionState;
-import co.chatchain.dc.messages.handlers.APIMessages;
-import co.chatchain.dc.messages.objects.GenericMessage;
-import co.chatchain.dc.messages.objects.Group;
-import co.chatchain.dc.messages.objects.User;
 import io.reactivex.Single;
 import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
@@ -41,7 +38,8 @@ import java.util.StringJoiner;
 /**
  * Our bot's main class. Used for init of QSML modules, and main entry point.
  */
-public class ChatChainDC {
+public class ChatChainDC
+{
 
     private String accessToken = "";
 
@@ -100,8 +98,7 @@ public class ChatChainDC {
         try
         {
             jda = new JDABuilder(AccountType.BOT).setToken(mainConfig.getDiscordClientId()).buildBlocking();
-        }
-        catch (LoginException | InterruptedException e)
+        } catch (LoginException | InterruptedException e)
         {
             System.out.println("Could not initiate discord connection");
             e.printStackTrace();
@@ -113,8 +110,7 @@ public class ChatChainDC {
         try
         {
             accessToken = getAccessToken();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             System.out.println("Exception while attempting to get ChatChain Access Token from IdentityServer: " + e);
         }
@@ -150,14 +146,16 @@ public class ChatChainDC {
         arguments.put("client_secret", clientSecret);
         arguments.put("grant_type", "client_credentials");
         StringJoiner sj = new StringJoiner("&");
-        for (Map.Entry<String, String> entry : arguments.entrySet()) {
+        for (Map.Entry<String, String> entry : arguments.entrySet())
+        {
             sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8"));
         }
         byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
         int length = out.length;
         http.setFixedLengthStreamingMode(length);
         http.connect();
-        try (OutputStream os = http.getOutputStream()) {
+        try (OutputStream os = http.getOutputStream())
+        {
             os.write(out);
         }
 
@@ -174,7 +172,8 @@ public class ChatChainDC {
      *
      * @param args the arguments fed to the JVM on init.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
         new ChatChainDC();
     }
@@ -195,8 +194,7 @@ public class ChatChainDC {
             config.init(loader, node, token);
             config.save();
             return config;
-        }
-        catch (IOException | ObjectMappingException | IllegalAccessException | InstantiationException e)
+        } catch (IOException | ObjectMappingException | IllegalAccessException | InstantiationException e)
         {
             System.out.println("Getting the config failed");
             e.printStackTrace();

@@ -1,15 +1,11 @@
 package co.chatchain.dc.messages.objects;
 
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Delegate;
-import net.dv8tion.jda.core.entities.Channel;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @ConfigSerializable
 public class Group
@@ -26,7 +22,9 @@ public class Group
     @Getter
     private List<String> channelMapping = new ArrayList<>();
 
-    public Group() {}
+    public Group()
+    {
+    }
 
     public Group(final String groupId)
     {

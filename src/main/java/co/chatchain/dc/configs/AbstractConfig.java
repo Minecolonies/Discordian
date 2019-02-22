@@ -29,8 +29,7 @@ public abstract class AbstractConfig<T extends ConfigurationLoader<K>, K extends
         {
             this.node.setValue(this.token, this);
             this.loader.save(this.node);
-        }
-        catch (IOException | ObjectMappingException e)
+        } catch (IOException | ObjectMappingException e)
         {
             System.out.println("Error saving config");
             e.printStackTrace();
@@ -42,8 +41,7 @@ public abstract class AbstractConfig<T extends ConfigurationLoader<K>, K extends
         try
         {
             this.node = this.loader.load();
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             System.out.println("Error loading config");
             e.printStackTrace();
