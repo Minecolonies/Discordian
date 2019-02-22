@@ -44,7 +44,7 @@ repositories {
 dependencies {
     compile('org.jetbrains:annotations:15.0')
 
-    testCompile(group: 'junit', name: 'junit', version: '4.12')
+    //testCompile(group: 'junit', name: 'junit', version: '4.12')
     compile('net.dv8tion:JDA:3.6.0_354')
 
     compile('org.slf4j:slf4j-api:1.7.25')
@@ -52,26 +52,14 @@ dependencies {
     compileOnly('org.projectlombok:lombok:1.16.18')
     apt('org.projectlombok:lombok:1.16.18')
     compile('ninja.leaping.configurate:configurate-gson:3.3')
-    compile('org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5')
+    //compile('org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5')
 
     compile 'org.java-websocket:Java-WebSocket:1.3.4'
 
-    compile('com.google.inject:guice:4.0')
-    compile(qsmlDep)
-    compile('io.github.lukehutch:fast-classpath-scanner')
-
     compile('com.jagrosh:jda-utilities-command:2.1')
 
-    compile('org:ChatChain_ChatChainConnect_Branches:' + chatChainConnectVersion) {
-        artifact {
-            name = 'chatchainconnect-' + chatChainConnectVersion + '-all'
-            type = 'jar'
-        }
-        artifact {
-            name = 'chatchainconnect-' + chatChainConnectVersion + '-sources'
-            type = 'jar'
-        }
-    }
+    compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
+    compile 'io.reactivex.rxjava2:rxjava:2.2.2'
 }
 
 shadowJar {
