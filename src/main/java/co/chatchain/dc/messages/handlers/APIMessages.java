@@ -1,7 +1,8 @@
 package co.chatchain.dc.messages.handlers;
 
+import co.chatchain.commons.messages.objects.message.GenericMessage;
 import co.chatchain.dc.ChatChainDC;
-import co.chatchain.dc.messages.objects.GenericMessage;
+import co.chatchain.dc.configs.GroupConfig;
 
 import static co.chatchain.dc.Constants.*;
 
@@ -19,7 +20,10 @@ public class APIMessages
     {
         if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(message.getGroup().getGroupId()))
         {
-            chatChainDC.getGroupsConfig().getGroupStorage().put(message.getGroup().getGroupId(), message.getGroup());
+            GroupConfig config = new GroupConfig();
+            config.setGroup(message.getGroup());
+
+            chatChainDC.getGroupsConfig().getGroupStorage().put(message.getGroup().getGroupId(), config);
             chatChainDC.getGroupsConfig().save();
         }
 

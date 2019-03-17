@@ -1,6 +1,8 @@
-package co.chatchain.dc.messages.objects;
+package co.chatchain.dc.configs;
 
+import co.chatchain.commons.messages.objects.Group;
 import lombok.Getter;
+import lombok.Setter;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -8,26 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ConfigSerializable
-public class Group
+public class GroupConfig
 {
-    @Getter
-    @Setting("group-name")
-    private String groupName;
 
     @Getter
-    @Setting("group-ID")
-    private String groupId;
+    @Setter
+    @Setting("group")
+    private Group group;
 
     @Setting("mapped-channels")
     @Getter
     private List<String> channelMapping = new ArrayList<>();
 
-    public Group()
-    {
-    }
-
-    public Group(final String groupId)
-    {
-        this.groupId = groupId;
-    }
 }

@@ -1,16 +1,17 @@
 package co.chatchain.dc;
 
+import co.chatchain.commons.AccessTokenResolver;
+import co.chatchain.commons.ChatChainHubConnection;
+import co.chatchain.commons.messages.objects.Group;
+import co.chatchain.commons.messages.objects.message.GenericMessage;
 import co.chatchain.dc.configs.AbstractConfig;
 import co.chatchain.dc.configs.FormattingConfig;
 import co.chatchain.dc.configs.GroupsConfig;
 import co.chatchain.dc.configs.MainConfig;
 import co.chatchain.dc.messages.handlers.APIMessages;
 import co.chatchain.dc.messages.handlers.JDAMessages;
-import co.chatchain.dc.messages.objects.GenericMessage;
+import co.chatchain.dc.serializers.GroupTypeSerializer;
 import com.google.common.reflect.TypeToken;
-import com.microsoft.signalr.HubConnection;
-import com.microsoft.signalr.HubConnectionBuilder;
-import io.reactivex.Single;
 import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -20,6 +21,7 @@ import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 import org.json.JSONObject;
 
 import javax.security.auth.login.LoginException;
@@ -44,7 +46,7 @@ public class ChatChainDC
     private String accessToken = "";
 
     @Getter
-    private HubConnection connection = null;
+    private ChatChainHubConnection connection = null;
 
     @Getter
     private JDA jda;
@@ -84,6 +86,8 @@ public class ChatChainDC
 
         System.out.println(mainConfigPath);
 
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(Group.class), new GroupTypeSerializer());
+
         mainConfig = getConfig(mainConfigPath, MainConfig.class,
                 GsonConfigurationLoader.builder().setPath(mainConfigPath).build());
 
@@ -109,22 +113,22 @@ public class ChatChainDC
 
         try
         {
-            accessToken = getAccessToken();
+            accessToken = new AccessTokenResolver(mainConfig.getClientId(), mainConfig.getClientSecret(), mainConfig.getIdentityUrl()).getAccessToken();//getAccessToken();
         } catch (Exception e)
         {
             System.out.println("Exception while attempting to get ChatChain Access Token from IdentityServer: " + e);
         }
 
-        connection = HubConnectionBuilder.create(mainConfig.getApiUrl())
+        connection = new ChatChainHubConnection(mainConfig.getApiUrl(), accessToken);/*HubConnectionBuilder.create(mainConfig.getApiUrl())
                 .withAccessTokenProvider(Single.defer(() -> Single.just(accessToken)))
-                .build();
-        connection.start().blockingAwait();
+                .build();*/
+        connection.connect();
 
         System.out.println("Connection Established: " + connection.getConnectionState());
 
         final APIMessages apiHandler = new APIMessages(this);
 
-        connection.on("ReceiveGenericMessage", apiHandler::ReceiveGenericMessage, GenericMessage.class);
+        connection.onGenericMessage(apiHandler::ReceiveGenericMessage, GenericMessage.class);
     }
 
     private String getAccessToken() throws MalformedURLException, IOException

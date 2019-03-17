@@ -1,6 +1,6 @@
 package co.chatchain.dc.configs;
 
-import co.chatchain.dc.messages.objects.Group;
+import co.chatchain.commons.messages.objects.Group;
 import lombok.Getter;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
@@ -14,6 +14,6 @@ public class GroupsConfig extends AbstractConfig
 
     @Setting(value = "group-storage")
     @Getter
-    private Map<String, Group> groupStorage = new HashMap<>();
+    private Map<String, GroupConfig> groupStorage = new HashMap<>();
 
 }

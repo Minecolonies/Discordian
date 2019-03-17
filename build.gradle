@@ -12,7 +12,7 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
-mainClassName = "com.minecolonies.chatchaindc.ChatChainDC"
+mainClassName = "co.chatchain.dc.ChatChainDC"
 
 def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
 
@@ -58,8 +58,20 @@ dependencies {
 
     compile('com.jagrosh:jda-utilities-command:2.1')
 
-    compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
+    //compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
     compile 'io.reactivex.rxjava2:rxjava:2.2.2'
+
+    compile('org:ChatChain_ChatChainCommons_Branches:' + chatChainCommonsVersion) {
+        artifact {
+            name = 'ChatChainCommons-' + chatChainCommonsVersion + '-all'
+            type = 'jar'
+        }
+        artifact {
+            name = 'ChatChainCommons-' + chatChainCommonsVersion + '-sources'
+            type = 'jar'
+            classifier = "sources"
+        }
+    }
 }
 
 shadowJar {
@@ -68,12 +80,12 @@ shadowJar {
 
     configurations = [project.configurations.compile]
     manifest {
-        attributes 'Main-Class': "com.minecolonies.chatchaindc.ChatChainDC"
+        attributes 'Main-Class': "co.chatchain.dc.ChatChainDC"
     }
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': "com.minecolonies.chatchaindc.ChatChainDC"
+        attributes 'Main-Class': "co.chatchain.dc.ChatChainDC"
     }
 }
