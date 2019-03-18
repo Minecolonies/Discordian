@@ -2,8 +2,12 @@ package co.chatchain.dc;
 
 import co.chatchain.commons.AccessTokenResolver;
 import co.chatchain.commons.ChatChainHubConnection;
+import co.chatchain.commons.messages.objects.Client;
 import co.chatchain.commons.messages.objects.Group;
+import co.chatchain.commons.messages.objects.message.ClientEventMessage;
 import co.chatchain.commons.messages.objects.message.GenericMessage;
+import co.chatchain.commons.messages.objects.message.GetClientResponse;
+import co.chatchain.commons.messages.objects.message.GetGroupsResponse;
 import co.chatchain.dc.configs.AbstractConfig;
 import co.chatchain.dc.configs.FormattingConfig;
 import co.chatchain.dc.configs.GroupsConfig;
@@ -13,6 +17,7 @@ import co.chatchain.dc.messages.handlers.JDAMessages;
 import co.chatchain.dc.serializers.GroupTypeSerializer;
 import com.google.common.reflect.TypeToken;
 import lombok.Getter;
+import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -22,20 +27,12 @@ import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
-import org.json.JSONObject;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.StringJoiner;
 
 /**
  * Our bot's main class. Used for init of QSML modules, and main entry point.
@@ -61,6 +58,10 @@ public class ChatChainDC
     private FormattingConfig formattingConfig;
 
     private File configDir;
+
+    @Getter
+    @Setter
+    private Client client;
 
     /**
      * The constructor for our bot.
@@ -119,9 +120,7 @@ public class ChatChainDC
             System.out.println("Exception while attempting to get ChatChain Access Token from IdentityServer: " + e);
         }
 
-        connection = new ChatChainHubConnection(mainConfig.getApiUrl(), accessToken);/*HubConnectionBuilder.create(mainConfig.getApiUrl())
-                .withAccessTokenProvider(Single.defer(() -> Single.just(accessToken)))
-                .build();*/
+        connection = new ChatChainHubConnection(mainConfig.getApiUrl(), accessToken);
         connection.connect();
 
         System.out.println("Connection Established: " + connection.getConnectionState());
@@ -129,46 +128,13 @@ public class ChatChainDC
         final APIMessages apiHandler = new APIMessages(this);
 
         connection.onGenericMessage(apiHandler::ReceiveGenericMessage, GenericMessage.class);
-    }
+        connection.onClientEventMessage(apiHandler::ReceiveClientEvent, ClientEventMessage.class);
+        connection.onGetGroupsResponse(apiHandler::ReceiveGroups, GetGroupsResponse.class);
+        connection.onGetClientResponse(apiHandler::ReceiveClient, GetClientResponse.class);
 
-    private String getAccessToken() throws MalformedURLException, IOException
-    {
-        System.out.println("Ran Here");
-
-        URL url = new URL(mainConfig.getIdentityUrl());
-
-        URLConnection con = url.openConnection();
-        HttpURLConnection http = (HttpURLConnection) con;
-        http.setRequestMethod("POST");
-        http.setDoOutput(true);
-
-        final String clientId = mainConfig.getClientId();
-        final String clientSecret = mainConfig.getClientSecret();
-
-        Map<String, String> arguments = new HashMap<>();
-        arguments.put("client_id", clientId);
-        arguments.put("client_secret", clientSecret);
-        arguments.put("grant_type", "client_credentials");
-        StringJoiner sj = new StringJoiner("&");
-        for (Map.Entry<String, String> entry : arguments.entrySet())
-        {
-            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
-        int length = out.length;
-        http.setFixedLengthStreamingMode(length);
-        http.connect();
-        try (OutputStream os = http.getOutputStream())
-        {
-            os.write(out);
-        }
-
-        Scanner s = new Scanner(http.getInputStream()).useDelimiter("\\A");
-        String output = s.hasNext() ? s.next() : "";
-
-        JSONObject jsonObject = new JSONObject(output);
-
-        return jsonObject.getString("access_token");
+        connection.sendGetGroups();
+        connection.sendGetClient();
+        connection.sendClientEventMessage(new ClientEventMessage("START"));
     }
 
     /**
@@ -204,20 +170,5 @@ public class ChatChainDC
             e.printStackTrace();
             return null;
         }
-    }
-
-    public void reloadConfigs()
-    {
-        final Path mainConfigPath = configDir.toPath().resolve("main.json");
-        mainConfig = getConfig(mainConfigPath, MainConfig.class,
-                GsonConfigurationLoader.builder().setPath(mainConfigPath).build());
-
-        final Path groupsConfigPath = configDir.toPath().resolve("groups.json");
-        groupsConfig = getConfig(groupsConfigPath, GroupsConfig.class,
-                GsonConfigurationLoader.builder().setPath(groupsConfigPath).build());
-
-        final Path formattingConfigPath = configDir.toPath().resolve("formatting.json");
-        formattingConfig = getConfig(formattingConfigPath, FormattingConfig.class,
-                GsonConfigurationLoader.builder().setPath(formattingConfigPath).build());
     }
 }

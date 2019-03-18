@@ -1,10 +1,13 @@
 package co.chatchain.dc.messages.handlers;
 
+import co.chatchain.commons.messages.objects.Group;
+import co.chatchain.commons.messages.objects.message.ClientEventMessage;
 import co.chatchain.commons.messages.objects.message.GenericMessage;
+import co.chatchain.commons.messages.objects.message.GetClientResponse;
+import co.chatchain.commons.messages.objects.message.GetGroupsResponse;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
-
-import static co.chatchain.dc.Constants.*;
+import co.chatchain.dc.configs.GroupsConfig;
 
 public class APIMessages
 {
@@ -22,31 +25,15 @@ public class APIMessages
         {
             GroupConfig config = new GroupConfig();
             config.setGroup(message.getGroup());
-
             chatChainDC.getGroupsConfig().getGroupStorage().put(message.getGroup().getGroupId(), config);
             chatChainDC.getGroupsConfig().save();
         }
 
-        String messageToSend;
+        String messageToSend = chatChainDC.getFormattingConfig().getGenericMessage(chatChainDC, message);
 
-        if (chatChainDC.getFormattingConfig().getGenericMessageFormats().containsKey(message.getGroup().getGroupId()))
+        if (messageToSend == null)
         {
-            messageToSend = chatChainDC.getFormattingConfig().getGenericMessageFormats().get(message.getGroup().getGroupId())
-                    .replace(GROUP_NAME, message.getGroup().getGroupName())
-                    .replace(GROUP_ID, message.getGroup().getGroupId())
-                    .replace(USER_NAME, message.getUser().getName())
-                    .replace(SENDING_CLIENT_NAME, message.getSendingClient().getClientName())
-                    .replace(SENDING_CLIENT_GUID, message.getSendingClient().getClientGuid())
-                    .replace(MESSAGE, message.getMessage());
-        } else
-        {
-            messageToSend = chatChainDC.getFormattingConfig().getDefaultGenericMessageFormat()
-                    .replace(GROUP_NAME, message.getGroup().getGroupName())
-                    .replace(GROUP_ID, message.getGroup().getGroupId())
-                    .replace(USER_NAME, message.getUser().getName())
-                    .replace(SENDING_CLIENT_NAME, message.getSendingClient().getClientName())
-                    .replace(SENDING_CLIENT_GUID, message.getSendingClient().getClientGuid())
-                    .replace(MESSAGE, message.getMessage());
+            return;
         }
 
         System.out.println(messageToSend);
@@ -55,10 +42,55 @@ public class APIMessages
         {
             if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
             {
-
                 chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
+    }
+
+    public void ReceiveClientEvent(final ClientEventMessage message)
+    {
+        for (final String groupId : chatChainDC.getGroupsConfig().getClientEventGroups())
+        {
+            if (chatChainDC.getGroupsConfig().getGroupStorage().containsKey(groupId))
+            {
+                final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
+                final String messageToSend = chatChainDC.getFormattingConfig().getClientEventMessage(chatChainDC, message, groupConfig.getGroup());
+
+                if (messageToSend == null)
+                {
+                    return;
+                }
+
+                for (final String channelId : groupConfig.getChannelMapping())
+                {
+                    if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
+                    {
+                        chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
+                    }
+                }
+            }
+        }
+    }
+
+    public void ReceiveGroups(final GetGroupsResponse message)
+    {
+        final GroupsConfig groupsConfig = chatChainDC.getGroupsConfig();
+
+        for (final Group group : message.getGroups())
+        {
+            if (!groupsConfig.getGroupStorage().containsKey(group.getGroupId()))
+            {
+                GroupConfig config = new GroupConfig();
+                config.setGroup(group);
+                groupsConfig.getGroupStorage().put(group.getGroupId(), config);
+            }
+        }
+        groupsConfig.save();
+    }
+
+    public void ReceiveClient(final GetClientResponse message)
+    {
+        chatChainDC.setClient(message.getClient());
     }
 
 
