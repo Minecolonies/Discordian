@@ -4,6 +4,7 @@ import co.chatchain.commons.messages.objects.Client;
 import co.chatchain.commons.messages.objects.Group;
 import co.chatchain.commons.messages.objects.message.ClientEventMessage;
 import co.chatchain.commons.messages.objects.message.GenericMessage;
+import co.chatchain.commons.messages.objects.message.UserEventMessage;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.Constants;
 import lombok.Getter;
@@ -12,8 +13,6 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @ConfigSerializable
 public class FormattingConfig extends AbstractConfig
@@ -84,13 +83,13 @@ public class FormattingConfig extends AbstractConfig
     private Map<String, String> clientStartEventFormats = new HashMap<>();
 
     @Setting("default-client-start-event-format")
-    private String defaultClientStartEventFormats = "[{group-name}] {sending-client-name} has connected";
+    private String defaultClientStartEventFormats = "[{group-name}] {sending-client-name} has **connected**";
 
     @Setting("client-stop-event-formats")
     private Map<String, String> clientStopEventFormats = new HashMap<>();
 
     @Setting("default-client-stop-event-format")
-    private String defaultClientStopEventFormats = "[{group-name}] {sending-client-name} has disconnected";
+    private String defaultClientStopEventFormats = "[{group-name}] {sending-client-name} has **disconnected**";
 
     public String getClientEventMessage(final ChatChainDC chatChainDC, final ClientEventMessage message, final Group group)
     {
@@ -110,6 +109,63 @@ public class FormattingConfig extends AbstractConfig
         }
 
         return getReplacements(chatChainDC, group, message.getClient(), defaultOrOverride);
+    }
+
+    @Setting("user-event-formats_comment")
+    private String userEventComment = "Template options: " +
+            Constants.GROUP_NAME + " - The message's group's name " +
+            Constants.GROUP_ID + " - The message's group's ID " +
+            Constants.USER_NAME + " - Name of the user who sent the message " +
+            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the message " +
+            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the message ";
+
+    @Getter
+    @Setting("user-login-event-formats")
+    private Map<String, String> userLoginEventFormats = new HashMap<>();
+
+    @Getter
+    @Setting("default-user-login-event-format")
+    private String defaultUserLoginEventFormats = "[{group-name}] [{sending-client-name}] {user-name} has **logged in**";
+
+    @Getter
+    @Setting("user-logout-event-formats")
+    private Map<String, String> userLogoutEventFormats = new HashMap<>();
+
+    @Getter
+    @Setting("default-user-logout-event-format")
+    private String defaultUserLogoutEventFormats = "[{group-name}] [{sending-client-name}] {user-name} has **logged out**";
+
+    @Getter
+    @Setting("user-death-event-formats")
+    private Map<String, String> userDeathEventFormats = new HashMap<>();
+
+    @Getter
+    @Setting("default-user-death-event-format")
+    private String defaultUserDeathEventFormats = "[{group-name}] [{sending-client-name}] {user-name} has **died**";
+
+    public String getUserEventMessage(final ChatChainDC chatChainDC, final UserEventMessage message, final Group group)
+    {
+        final String defaultOrOverride;
+        if (message.getEvent().equalsIgnoreCase("LOGIN"))
+        {
+            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultUserLoginEventFormats, userLoginEventFormats);
+        }
+        else if (message.getEvent().equalsIgnoreCase("LOGOUT"))
+        {
+            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultUserLogoutEventFormats, userLogoutEventFormats);
+        }
+        else if (message.getEvent().equalsIgnoreCase("DEATH"))
+        {
+            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultUserDeathEventFormats, userDeathEventFormats);
+        }
+        else
+        {
+            return null;
+        }
+
+        String stringMessage = getReplacements(chatChainDC, group, message.getClient(), defaultOrOverride);
+
+        return stringMessage.replaceAll("(\\{user-name})", message.getUser().getName());
     }
 
 }

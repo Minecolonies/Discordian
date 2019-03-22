@@ -4,10 +4,7 @@ import co.chatchain.commons.AccessTokenResolver;
 import co.chatchain.commons.ChatChainHubConnection;
 import co.chatchain.commons.messages.objects.Client;
 import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.message.ClientEventMessage;
-import co.chatchain.commons.messages.objects.message.GenericMessage;
-import co.chatchain.commons.messages.objects.message.GetClientResponse;
-import co.chatchain.commons.messages.objects.message.GetGroupsResponse;
+import co.chatchain.commons.messages.objects.message.*;
 import co.chatchain.dc.configs.AbstractConfig;
 import co.chatchain.dc.configs.FormattingConfig;
 import co.chatchain.dc.configs.GroupsConfig;
@@ -40,7 +37,7 @@ import java.nio.file.Path;
 public class ChatChainDC
 {
 
-    private String accessToken = "";
+    private AccessTokenResolver accessToken = null;
 
     @Getter
     private ChatChainHubConnection connection = null;
@@ -103,7 +100,8 @@ public class ChatChainDC
         try
         {
             jda = new JDABuilder(AccountType.BOT).setToken(mainConfig.getDiscordClientId()).buildBlocking();
-        } catch (LoginException | InterruptedException e)
+        }
+        catch (LoginException | InterruptedException e)
         {
             System.out.println("Could not initiate discord connection");
             e.printStackTrace();
@@ -114,10 +112,11 @@ public class ChatChainDC
 
         try
         {
-            accessToken = new AccessTokenResolver(mainConfig.getClientId(), mainConfig.getClientSecret(), mainConfig.getIdentityUrl()).getAccessToken();//getAccessToken();
+            accessToken = new AccessTokenResolver(mainConfig.getClientId(), mainConfig.getClientSecret(), mainConfig.getIdentityUrl());
         } catch (Exception e)
         {
             System.out.println("Exception while attempting to get ChatChain Access Token from IdentityServer: " + e);
+            return;
         }
 
         connection = new ChatChainHubConnection(mainConfig.getApiUrl(), accessToken);
@@ -129,6 +128,7 @@ public class ChatChainDC
 
         connection.onGenericMessage(apiHandler::ReceiveGenericMessage, GenericMessage.class);
         connection.onClientEventMessage(apiHandler::ReceiveClientEvent, ClientEventMessage.class);
+        connection.onUserEventMessage(apiHandler::ReceiveUserEvent, UserEventMessage.class);
         connection.onGetGroupsResponse(apiHandler::ReceiveGroups, GetGroupsResponse.class);
         connection.onGetClientResponse(apiHandler::ReceiveClient, GetClientResponse.class);
 

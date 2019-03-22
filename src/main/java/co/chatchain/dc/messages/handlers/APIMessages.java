@@ -1,10 +1,7 @@
 package co.chatchain.dc.messages.handlers;
 
 import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.message.ClientEventMessage;
-import co.chatchain.commons.messages.objects.message.GenericMessage;
-import co.chatchain.commons.messages.objects.message.GetClientResponse;
-import co.chatchain.commons.messages.objects.message.GetGroupsResponse;
+import co.chatchain.commons.messages.objects.message.*;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import co.chatchain.dc.configs.GroupsConfig;
@@ -55,6 +52,31 @@ public class APIMessages
             {
                 final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
                 final String messageToSend = chatChainDC.getFormattingConfig().getClientEventMessage(chatChainDC, message, groupConfig.getGroup());
+
+                if (messageToSend == null)
+                {
+                    return;
+                }
+
+                for (final String channelId : groupConfig.getChannelMapping())
+                {
+                    if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
+                    {
+                        chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
+                    }
+                }
+            }
+        }
+    }
+
+    public void ReceiveUserEvent(final UserEventMessage message)
+    {
+        for (final String groupId : chatChainDC.getGroupsConfig().getUserEventGroups())
+        {
+            if (chatChainDC.getGroupsConfig().getGroupStorage().containsKey(groupId))
+            {
+                final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
+                final String messageToSend = chatChainDC.getFormattingConfig().getUserEventMessage(chatChainDC, message, groupConfig.getGroup());
 
                 if (messageToSend == null)
                 {
