@@ -1,7 +1,7 @@
 package co.chatchain.dc.messages.handlers;
 
 import co.chatchain.commons.messages.objects.User;
-import co.chatchain.commons.messages.objects.message.GenericMessage;
+import co.chatchain.commons.messages.objects.messages.GenericMessage;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;

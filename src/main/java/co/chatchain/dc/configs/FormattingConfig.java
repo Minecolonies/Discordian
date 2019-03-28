@@ -2,9 +2,9 @@ package co.chatchain.dc.configs;
 
 import co.chatchain.commons.messages.objects.Client;
 import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.message.ClientEventMessage;
-import co.chatchain.commons.messages.objects.message.GenericMessage;
-import co.chatchain.commons.messages.objects.message.UserEventMessage;
+import co.chatchain.commons.messages.objects.messages.ClientEventMessage;
+import co.chatchain.commons.messages.objects.messages.GenericMessage;
+import co.chatchain.commons.messages.objects.messages.UserEventMessage;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.Constants;
 import lombok.Getter;
@@ -45,17 +45,17 @@ public class FormattingConfig extends AbstractConfig
 
     @Setting("generic-messages_comment")
     private String genericMessageComment = "Template options:\n" +
-            Constants.GROUP_NAME + " - The message's group's name\n" +
-            Constants.GROUP_ID + " - The message's group's ID\n" +
-            Constants.USER_NAME + " - Name of the user who sent the message\n" +
-            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the message\n" +
-            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the message\n" +
-            Constants.MESSAGE + " - The message that was sent";
+            Constants.GROUP_NAME + " - The messages's group's name\n" +
+            Constants.GROUP_ID + " - The messages's group's ID\n" +
+            Constants.USER_NAME + " - Name of the user who sent the messages\n" +
+            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the messages\n" +
+            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the messages\n" +
+            Constants.MESSAGE + " - The messages that was sent";
 
-    @Setting("generic-message-formats")
+    @Setting("generic-messages-formats")
     private Map<String, String> genericMessageFormats = new HashMap<>();
 
-    @Setting("default-generic-message-format")
+    @Setting("default-generic-messages-format")
     private String defaultGenericMessageFormat = "[{group-name}] [{sending-client-name}] <{user-name}>: {message}";
 
     public String getGenericMessage(final ChatChainDC chatChainDC, final GenericMessage message)
@@ -74,10 +74,10 @@ public class FormattingConfig extends AbstractConfig
 
     @Setting("client-event-formats_comment")
     private String clientEventComment = "Template options: " +
-            Constants.GROUP_NAME + " - The message's group's name " +
-            Constants.GROUP_ID + " - The message's group's ID " +
-            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the message " +
-            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the message ";
+            Constants.GROUP_NAME + " - The messages's group's name " +
+            Constants.GROUP_ID + " - The messages's group's ID " +
+            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the messages " +
+            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the messages ";
 
     @Setting("client-start-event-formats")
     private Map<String, String> clientStartEventFormats = new HashMap<>();
@@ -108,16 +108,16 @@ public class FormattingConfig extends AbstractConfig
             return null;
         }
 
-        return getReplacements(chatChainDC, group, message.getClient(), defaultOrOverride);
+        return getReplacements(chatChainDC, group, message.getSendingClient(), defaultOrOverride);
     }
 
     @Setting("user-event-formats_comment")
     private String userEventComment = "Template options: " +
-            Constants.GROUP_NAME + " - The message's group's name " +
-            Constants.GROUP_ID + " - The message's group's ID " +
-            Constants.USER_NAME + " - Name of the user who sent the message " +
-            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the message " +
-            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the message ";
+            Constants.GROUP_NAME + " - The messages's group's name " +
+            Constants.GROUP_ID + " - The messages's group's ID " +
+            Constants.USER_NAME + " - Name of the user who sent the messages " +
+            Constants.SENDING_CLIENT_NAME + " - Name of the Client who sent the messages " +
+            Constants.SENDING_CLIENT_GUID + " - The GUID of the client who sent the messages ";
 
     @Getter
     @Setting("user-login-event-formats")
@@ -163,7 +163,7 @@ public class FormattingConfig extends AbstractConfig
             return null;
         }
 
-        String stringMessage = getReplacements(chatChainDC, group, message.getClient(), defaultOrOverride);
+        String stringMessage = getReplacements(chatChainDC, group, message.getSendingClient(), defaultOrOverride);
 
         return stringMessage.replaceAll("(\\{user-name})", message.getUser().getName());
     }

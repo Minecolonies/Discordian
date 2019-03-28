@@ -8,7 +8,6 @@ public class Constants
     public static final String USER_NAME = "{user-name}";
     public static final String SENDING_CLIENT_NAME = "{sending-client-name}";
     public static final String SENDING_CLIENT_GUID = "{sending-client-guid}";
-    public static final String MESSAGE = "{message}";
-
+    public static final String MESSAGE = "{messages}";
 
 }

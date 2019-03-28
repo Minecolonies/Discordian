@@ -1,7 +1,7 @@
 package co.chatchain.dc.messages.handlers;
 
 import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.message.*;
+import co.chatchain.commons.messages.objects.messages.*;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import co.chatchain.dc.configs.GroupsConfig;
