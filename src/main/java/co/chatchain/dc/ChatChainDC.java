@@ -126,15 +126,17 @@ public class ChatChainDC
 
         final APIMessages apiHandler = new APIMessages(this);
 
-        connection.onGenericMessage(apiHandler::ReceiveGenericMessage, GenericMessage.class);
-        connection.onClientEventMessage(apiHandler::ReceiveClientEvent, ClientEventMessage.class);
-        connection.onUserEventMessage(apiHandler::ReceiveUserEvent, UserEventMessage.class);
-        connection.onGetGroupsResponse(apiHandler::ReceiveGroups, GetGroupsResponse.class);
-        connection.onGetClientResponse(apiHandler::ReceiveClient, GetClientResponse.class);
+        connection.onConnection(hub -> {
+            hub.onGenericMessage(apiHandler::ReceiveGenericMessage, GenericMessage.class);
+            hub.onClientEventMessage(apiHandler::ReceiveClientEvent, ClientEventMessage.class);
+            hub.onUserEventMessage(apiHandler::ReceiveUserEvent, UserEventMessage.class);
+            hub.onGetGroupsResponse(apiHandler::ReceiveGroups, GetGroupsResponse.class);
+            hub.onGetClientResponse(apiHandler::ReceiveClient, GetClientResponse.class);
 
-        connection.sendGetGroups();
-        connection.sendGetClient();
-        connection.sendClientEventMessage(new ClientEventMessage("START"));
+            hub.sendGetGroups();
+            hub.sendGetClient();
+            hub.sendClientEventMessage(new ClientEventMessage("START"));
+        });
     }
 
     /**
