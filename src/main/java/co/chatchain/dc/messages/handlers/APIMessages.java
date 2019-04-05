@@ -46,7 +46,12 @@ public class APIMessages
 
     public void ReceiveClientEvent(final ClientEventMessage message)
     {
-        for (final String groupId : chatChainDC.getGroupsConfig().getClientEventGroups())
+        if (!chatChainDC.getGroupsConfig().getClientEventGroups().containsKey(message.getSendingClient().getClientId()))
+        {
+            return;
+        }
+
+        for (final String groupId : chatChainDC.getGroupsConfig().getClientEventGroups().get(message.getSendingClient().getClientId()))
         {
             if (chatChainDC.getGroupsConfig().getGroupStorage().containsKey(groupId))
             {
@@ -71,7 +76,12 @@ public class APIMessages
 
     public void ReceiveUserEvent(final UserEventMessage message)
     {
-        for (final String groupId : chatChainDC.getGroupsConfig().getUserEventGroups())
+        if (!chatChainDC.getGroupsConfig().getUserEventGroups().containsKey(message.getSendingClient().getClientId()))
+        {
+            return;
+        }
+
+        for (final String groupId : chatChainDC.getGroupsConfig().getUserEventGroups().get(message.getSendingClient().getClientId()))
         {
             if (chatChainDC.getGroupsConfig().getGroupStorage().containsKey(groupId))
             {
