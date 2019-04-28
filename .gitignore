@@ -13,6 +13,8 @@
 /.gradle/
 /out/
 
+/config/
+
 # eclipse files
 .classpath
 .project
