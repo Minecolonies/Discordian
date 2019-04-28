@@ -113,7 +113,8 @@ public class ChatChainDC
         try
         {
             accessToken = new AccessTokenResolver(mainConfig.getClientId(), mainConfig.getClientSecret(), mainConfig.getIdentityUrl());
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             System.out.println("Exception while attempting to get ChatChain Access Token from IdentityServer: " + e);
             return;

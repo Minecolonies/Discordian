@@ -29,6 +29,9 @@ public class JDAMessages extends ListenerAdapter
         {
             final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
 
+            if (!groupConfig.isSendChat())
+                continue;
+
             if (groupConfig.getChannelMapping().contains(event.getChannel().getId()))
             {
                 final User user = new User(event.getAuthor().getName());
@@ -38,7 +41,5 @@ public class JDAMessages extends ListenerAdapter
                 chatChainDC.getConnection().sendGenericMessage(message);
             }
         }
-
-        //chatChainDC.getConnection().send("ReceiveGenericMessage");
     }
 }

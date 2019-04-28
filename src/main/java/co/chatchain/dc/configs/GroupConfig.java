@@ -18,6 +18,10 @@ public class GroupConfig
     @Setting("group")
     private Group group;
 
+    @Getter
+    @Setting("send-chat")
+    private boolean sendChat = true;
+
     @Setting("mapped-channels")
     @Getter
     private List<String> channelMapping = new ArrayList<>();
