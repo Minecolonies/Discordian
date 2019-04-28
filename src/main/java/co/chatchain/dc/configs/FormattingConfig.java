@@ -103,24 +103,24 @@ public class FormattingConfig extends AbstractConfig
     @Setting("default-client-stop-event-format")
     private String defaultClientStopEventFormats = "[{group-name}] {sending-client-name} has **disconnected**";
 
-    public String getClientEventMessage(final ChatChainDC chatChainDC, final ClientEventMessage message, final Group group)
+    public String getClientEventMessage(final ChatChainDC chatChainDC, final ClientEventMessage message)
     {
         System.out.println("here3!");
         final String defaultOrOverride;
         if (message.getEvent().equalsIgnoreCase("START"))
         {
-            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultClientStartEventFormats, clientStartEventFormats);
+            defaultOrOverride = getDefaultOrOverride(message.getGroup().getGroupId(), defaultClientStartEventFormats, clientStartEventFormats);
         }
         else if (message.getEvent().equalsIgnoreCase("STOP"))
         {
-            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultClientStopEventFormats, clientStopEventFormats);
+            defaultOrOverride = getDefaultOrOverride(message.getGroup().getGroupId(), defaultClientStopEventFormats, clientStopEventFormats);
         }
         else
         {
             return null;
         }
 
-        return getReplacements(chatChainDC, group, message.getSendingClient(), defaultOrOverride);
+        return getReplacements(chatChainDC, message.getGroup(), message.getSendingClient(), defaultOrOverride);
     }
 
     @Setting("user-event-formats_comment")
@@ -155,27 +155,27 @@ public class FormattingConfig extends AbstractConfig
     @Setting("default-user-death-event-format")
     private String defaultUserDeathEventFormats = "[{group-name}] [{sending-client-name}] {user-name} has **died**";
 
-    public String getUserEventMessage(final ChatChainDC chatChainDC, final UserEventMessage message, final Group group)
+    public String getUserEventMessage(final ChatChainDC chatChainDC, final UserEventMessage message)
     {
         final String defaultOrOverride;
         if (message.getEvent().equalsIgnoreCase("LOGIN"))
         {
-            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultUserLoginEventFormats, userLoginEventFormats);
+            defaultOrOverride = getDefaultOrOverride(message.getGroup().getGroupId(), defaultUserLoginEventFormats, userLoginEventFormats);
         }
         else if (message.getEvent().equalsIgnoreCase("LOGOUT"))
         {
-            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultUserLogoutEventFormats, userLogoutEventFormats);
+            defaultOrOverride = getDefaultOrOverride(message.getGroup().getGroupId(), defaultUserLogoutEventFormats, userLogoutEventFormats);
         }
         else if (message.getEvent().equalsIgnoreCase("DEATH"))
         {
-            defaultOrOverride = getDefaultOrOverride(group.getGroupId(), defaultUserDeathEventFormats, userDeathEventFormats);
+            defaultOrOverride = getDefaultOrOverride(message.getGroup().getGroupId(), defaultUserDeathEventFormats, userDeathEventFormats);
         }
         else
         {
             return null;
         }
 
-        String stringMessage = getReplacements(chatChainDC, group, message.getSendingClient(), defaultOrOverride);
+        String stringMessage = getReplacements(chatChainDC, message.getGroup(), message.getSendingClient(), defaultOrOverride);
 
         return stringMessage.replaceAll("(\\{user-name})", message.getUser().getName());
     }
