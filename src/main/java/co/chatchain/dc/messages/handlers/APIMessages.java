@@ -16,15 +16,20 @@ public class APIMessages
         this.chatChainDC = chatChainDC;
     }
 
-    public void ReceiveGenericMessage(final GenericMessage message)
+    public void createGroupInConfig(final Group group)
     {
-        if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(message.getGroup().getGroupId()))
+        if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(group.getGroupId()))
         {
             GroupConfig config = new GroupConfig();
-            config.setGroup(message.getGroup());
-            chatChainDC.getGroupsConfig().getGroupStorage().put(message.getGroup().getGroupId(), config);
+            config.setGroup(group);
+            chatChainDC.getGroupsConfig().getGroupStorage().put(group.getGroupId(), config);
             chatChainDC.getGroupsConfig().save();
         }
+    }
+
+    public void ReceiveGenericMessage(final GenericMessage message)
+    {
+        createGroupInConfig(message.getGroup());
 
         String messageToSend = chatChainDC.getFormattingConfig().getGenericMessage(chatChainDC, message);
 
@@ -46,60 +51,44 @@ public class APIMessages
 
     public void ReceiveClientEvent(final ClientEventMessage message)
     {
-        if (!chatChainDC.getGroupsConfig().getClientEventGroups().containsKey(message.getSendingClient().getClientId()))
+        createGroupInConfig(message.getGroup());
+
+        String messageToSend = chatChainDC.getFormattingConfig().getClientEventMessage(chatChainDC, message);
+
+        if (messageToSend == null)
         {
             return;
         }
 
-        for (final String groupId : chatChainDC.getGroupsConfig().getClientEventGroups().get(message.getSendingClient().getClientId()))
+        System.out.println(messageToSend);
+
+        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
-            if (chatChainDC.getGroupsConfig().getGroupStorage().containsKey(groupId))
+            if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
             {
-                final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
-                final String messageToSend = chatChainDC.getFormattingConfig().getClientEventMessage(chatChainDC, message, groupConfig.getGroup());
-
-                if (messageToSend == null)
-                {
-                    return;
-                }
-
-                for (final String channelId : groupConfig.getChannelMapping())
-                {
-                    if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
-                    {
-                        chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
-                    }
-                }
+                chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
     }
 
     public void ReceiveUserEvent(final UserEventMessage message)
     {
-        if (!chatChainDC.getGroupsConfig().getUserEventGroups().containsKey(message.getSendingClient().getClientId()))
+        createGroupInConfig(message.getGroup());
+
+        String messageToSend = chatChainDC.getFormattingConfig().getUserEventMessage(chatChainDC, message);
+
+        if (messageToSend == null)
         {
             return;
         }
 
-        for (final String groupId : chatChainDC.getGroupsConfig().getUserEventGroups().get(message.getSendingClient().getClientId()))
+        System.out.println(messageToSend);
+
+        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
-            if (chatChainDC.getGroupsConfig().getGroupStorage().containsKey(groupId))
+            if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
             {
-                final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
-                final String messageToSend = chatChainDC.getFormattingConfig().getUserEventMessage(chatChainDC, message, groupConfig.getGroup());
-
-                if (messageToSend == null)
-                {
-                    return;
-                }
-
-                for (final String channelId : groupConfig.getChannelMapping())
-                {
-                    if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
-                    {
-                        chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
-                    }
-                }
+                chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
     }
