@@ -38,8 +38,6 @@ public class APIMessages
             return;
         }
 
-        System.out.println(messageToSend);
-
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
             if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
@@ -62,8 +60,6 @@ public class APIMessages
             return;
         }
 
-        System.out.println(messageToSend);
-
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
             if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
@@ -85,8 +81,6 @@ public class APIMessages
         {
             return;
         }
-
-        System.out.println(messageToSend);
 
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
