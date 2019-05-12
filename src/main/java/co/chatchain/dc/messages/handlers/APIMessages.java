@@ -45,7 +45,7 @@ public class APIMessages
                 chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
-
+      
         System.out.println("New Generic Message: " + messageToSend);
     }
 

@@ -12,7 +12,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
 public class JDAMessages extends ListenerAdapter
 {
 

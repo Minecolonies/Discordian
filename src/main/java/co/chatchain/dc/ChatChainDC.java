@@ -61,7 +61,6 @@ public class ChatChainDC
 
     @Getter
     private ReplacementUtils replacementUtils;
-
     private File configDir;
 
     @Getter
@@ -104,6 +103,7 @@ public class ChatChainDC
         final Path formattingConfigPath = configDir.toPath().resolve("formatting.json");
         formattingConfig = getConfig(formattingConfigPath, FormattingConfig.class,
                 GsonConfigurationLoader.builder().setPath(formattingConfigPath).build());
+
 
         final Path advancedFormattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
         advancedFormattingConfig = getConfig(advancedFormattingConfigPath, AdvancedFormattingConfig.class,
