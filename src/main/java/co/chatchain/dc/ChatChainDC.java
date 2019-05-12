@@ -6,9 +6,11 @@ import co.chatchain.commons.messages.objects.Client;
 import co.chatchain.commons.messages.objects.Group;
 import co.chatchain.commons.messages.objects.messages.*;
 import co.chatchain.dc.configs.AbstractConfig;
-import co.chatchain.dc.configs.FormattingConfig;
 import co.chatchain.dc.configs.GroupsConfig;
 import co.chatchain.dc.configs.MainConfig;
+import co.chatchain.dc.configs.formatting.AdvancedFormattingConfig;
+import co.chatchain.dc.configs.formatting.FormattingConfig;
+import co.chatchain.dc.configs.formatting.ReplacementUtils;
 import co.chatchain.dc.messages.handlers.APIMessages;
 import co.chatchain.dc.messages.handlers.JDAMessages;
 import co.chatchain.dc.serializers.GroupTypeSerializer;
@@ -54,6 +56,12 @@ public class ChatChainDC
     @Getter
     private FormattingConfig formattingConfig;
 
+    @Getter
+    private AdvancedFormattingConfig advancedFormattingConfig;
+
+    @Getter
+    private ReplacementUtils replacementUtils;
+
     private File configDir;
 
     @Getter
@@ -96,6 +104,12 @@ public class ChatChainDC
         final Path formattingConfigPath = configDir.toPath().resolve("formatting.json");
         formattingConfig = getConfig(formattingConfigPath, FormattingConfig.class,
                 GsonConfigurationLoader.builder().setPath(formattingConfigPath).build());
+
+        final Path advancedFormattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
+        advancedFormattingConfig = getConfig(advancedFormattingConfigPath, AdvancedFormattingConfig.class,
+                GsonConfigurationLoader.builder().setPath(advancedFormattingConfigPath).build());
+
+        replacementUtils = new ReplacementUtils(this);
 
         try
         {
