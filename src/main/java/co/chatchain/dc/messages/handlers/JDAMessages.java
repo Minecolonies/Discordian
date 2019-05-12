@@ -40,6 +40,8 @@ public class JDAMessages extends ListenerAdapter
 
             final List<ClientRank> ranks = new ArrayList<>();
 
+            int priority = 0;
+
             for (final Role role : event.getMember().getRoles())
             {
                 String colourHex = null;
@@ -47,10 +49,10 @@ public class JDAMessages extends ListenerAdapter
                 {
                     colourHex = String.format("#%02x%02x%02x", role.getColor().getRed(), role.getColor().getGreen(), role.getColor().getBlue());
                 }
-                if (event.getGuild().getId().equals("453039954386223145"))
-                    System.out.println("Role Colour: " + colourHex + " For role: " + role.getName());
                 final String displayName = role.getName().substring(0, 1).toUpperCase() + role.getName().substring(1);
-                ranks.add(new ClientRank(role.getName(), role.getId(), role.getPosition(), displayName, colourHex));
+                ranks.add(new ClientRank(role.getName(), role.getId(), priority, displayName, colourHex));
+
+                priority++;
             }
 
             if (groupConfig.getChannelMapping().contains(event.getChannel().getId()))
