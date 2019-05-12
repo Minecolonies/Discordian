@@ -1,5 +1,6 @@
 package co.chatchain.dc.configs;
 
+import lombok.Getter;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -51,6 +52,12 @@ public class MainConfig extends AbstractConfig
 
     @Setting(value = "identity-url", comment = "Identity URL Your client is authenticating against")
     private String identityUrl = "https://identity.chatchain.co/connect/token";
+
+    //####### Use Advanced Formatting #######\\
+
+    @Getter
+    @Setting("advanced-formatting")
+    private Boolean advancedFormatting = false;
 
     public String getIdentityUrl()
     {

@@ -31,14 +31,12 @@ public class APIMessages
     {
         createGroupInConfig(message.getGroup());
 
-        String messageToSend = chatChainDC.getFormattingConfig().getGenericMessage(chatChainDC, message);
+        String messageToSend = chatChainDC.getReplacementUtils().getFormat(message);
 
         if (messageToSend == null)
         {
             return;
         }
-
-        System.out.println(messageToSend);
 
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
@@ -47,20 +45,20 @@ public class APIMessages
                 chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
+      
+        System.out.println("New Generic Message: " + messageToSend);
     }
 
     public void ReceiveClientEvent(final ClientEventMessage message)
     {
         createGroupInConfig(message.getGroup());
 
-        String messageToSend = chatChainDC.getFormattingConfig().getClientEventMessage(chatChainDC, message);
+        String messageToSend = chatChainDC.getReplacementUtils().getFormat(message);
 
         if (messageToSend == null)
         {
             return;
         }
-
-        System.out.println(messageToSend);
 
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
@@ -69,20 +67,20 @@ public class APIMessages
                 chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
+
+        System.out.println("New Client Event: " + messageToSend);
     }
 
     public void ReceiveUserEvent(final UserEventMessage message)
     {
         createGroupInConfig(message.getGroup());
 
-        String messageToSend = chatChainDC.getFormattingConfig().getUserEventMessage(chatChainDC, message);
+        String messageToSend = chatChainDC.getReplacementUtils().getFormat(message);
 
         if (messageToSend == null)
         {
             return;
         }
-
-        System.out.println(messageToSend);
 
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
         {
@@ -91,6 +89,8 @@ public class APIMessages
                 chatChainDC.getJda().getTextChannelById(channelId).sendMessage(messageToSend).queue();
             }
         }
+
+        System.out.println("New User Event: " + messageToSend);
     }
 
     public void ReceiveGroups(final GetGroupsResponse message)
