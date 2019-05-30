@@ -14,7 +14,7 @@ sourceCompatibility = 1.8
 
 mainClassName = "co.chatchain.dc.ChatChainDC"
 
-def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
+def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.10.1'
 
 sourceSets {
     main {
