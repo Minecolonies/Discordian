@@ -49,7 +49,7 @@ dependencies {
 
     compile('org.slf4j:slf4j-api:1.7.25')
     compile('org.slf4j:slf4j-jdk14:1.7.25')
-    compileOnly('org.projectlombok:lombok:1.16.18')
+    compileOnly('org.projectlombok:lombok:1.18.8')
     apt('org.projectlombok:lombok:1.16.18')
     compile('ninja.leaping.configurate:configurate-gson:3.3')
     //compile('org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5')
