@@ -59,7 +59,7 @@ dependencies {
     compile('com.jagrosh:jda-utilities-command:2.1')
 
     //compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
-    compile 'io.reactivex.rxjava2:rxjava:2.2.2'
+    compile 'io.reactivex.rxjava2:rxjava:2.2.9'
 
     compile('org:ChatChain_ChatChainCommons_Branches:' + chatChainCommonsVersion) {
         artifact {
