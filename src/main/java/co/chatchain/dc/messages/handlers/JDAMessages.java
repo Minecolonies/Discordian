@@ -42,17 +42,20 @@ public class JDAMessages extends ListenerAdapter
 
             int priority = 0;
 
-            for (final Role role : event.getMember().getRoles())
+            if (event.getMember() != null && event.getMember().getRoles() != null)
             {
-                String colourHex = null;
-                if (role.getColor() != null)
+                for (final Role role : event.getMember().getRoles())
                 {
-                    colourHex = String.format("#%02x%02x%02x", role.getColor().getRed(), role.getColor().getGreen(), role.getColor().getBlue());
-                }
-                final String displayName = role.getName().substring(0, 1).toUpperCase() + role.getName().substring(1);
-                ranks.add(new ClientRank(role.getName(), role.getId(), priority, displayName, colourHex));
+                    String colourHex = null;
+                    if (role.getColor() != null)
+                    {
+                        colourHex = String.format("#%02x%02x%02x", role.getColor().getRed(), role.getColor().getGreen(), role.getColor().getBlue());
+                    }
+                    final String displayName = role.getName().substring(0, 1).toUpperCase() + role.getName().substring(1);
+                    ranks.add(new ClientRank(role.getName(), role.getId(), priority, displayName, colourHex));
 
-                priority++;
+                    priority++;
+                }
             }
 
             if (groupConfig.getChannelMapping().contains(event.getChannel().getId()))
