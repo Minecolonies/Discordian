@@ -1,7 +1,7 @@
 package co.chatchain.dc.messages.handlers;
 
-import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.messages.*;
+import co.chatchain.commons.objects.Group;
+import co.chatchain.commons.objects.messages.*;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import co.chatchain.dc.configs.GroupsConfig;
@@ -18,16 +18,16 @@ public class APIMessages
 
     public void createGroupInConfig(final Group group)
     {
-        if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(group.getGroupId()))
+        if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(group.getId()))
         {
             GroupConfig config = new GroupConfig();
             config.setGroup(group);
-            chatChainDC.getGroupsConfig().getGroupStorage().put(group.getGroupId(), config);
+            chatChainDC.getGroupsConfig().getGroupStorage().put(group.getId(), config);
             chatChainDC.getGroupsConfig().save();
         }
     }
 
-    public void ReceiveGenericMessage(final GenericMessage message)
+    public void ReceiveGenericMessage(final GenericMessageMessage message)
     {
         createGroupInConfig(message.getGroup());
 
@@ -38,7 +38,7 @@ public class APIMessages
             return;
         }
 
-        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
+        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getId()).getChannelMapping())
         {
             if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
             {
@@ -60,7 +60,7 @@ public class APIMessages
             return;
         }
 
-        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
+        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getId()).getChannelMapping())
         {
             if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
             {
@@ -82,7 +82,7 @@ public class APIMessages
             return;
         }
 
-        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getGroupId()).getChannelMapping())
+        for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(message.getGroup().getId()).getChannelMapping())
         {
             if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
             {
@@ -93,23 +93,23 @@ public class APIMessages
         System.out.println("New User Event: " + messageToSend);
     }
 
-    public void ReceiveGroups(final GetGroupsResponse message)
+    public void ReceiveGroups(final GetGroupsMessage message)
     {
         final GroupsConfig groupsConfig = chatChainDC.getGroupsConfig();
 
         for (final Group group : message.getGroups())
         {
-            if (!groupsConfig.getGroupStorage().containsKey(group.getGroupId()))
+            if (!groupsConfig.getGroupStorage().containsKey(group.getId()))
             {
                 GroupConfig config = new GroupConfig();
                 config.setGroup(group);
-                groupsConfig.getGroupStorage().put(group.getGroupId(), config);
+                groupsConfig.getGroupStorage().put(group.getId(), config);
             }
         }
         groupsConfig.save();
     }
 
-    public void ReceiveClient(final GetClientResponse message)
+    public void ReceiveClient(final GetClientMessage message)
     {
         chatChainDC.setClient(message.getClient());
     }

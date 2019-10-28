@@ -1,6 +1,6 @@
 package co.chatchain.dc.serializers;
 
-import co.chatchain.commons.messages.objects.Group;
+import co.chatchain.commons.objects.Group;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -11,17 +11,19 @@ public class GroupTypeSerializer implements TypeSerializer<Group>
     @Override
     public Group deserialize(TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException
     {
-        final String groupId = value.getNode("group-id").getValue(TypeToken.of(String.class));
-        final String groupName = value.getNode("group-name").getValue(TypeToken.of(String.class));
-        final String ownerId = value.getNode("owner-id").getValue(TypeToken.of(String.class));
-        return new Group(groupId, groupName, ownerId);
+        final String id = value.getNode("id").getValue(TypeToken.of(String.class));
+        final String name = value.getNode("name").getValue(TypeToken.of(String.class));
+        final String description = value.getNode("description").getValue(TypeToken.of(String.class));
+        final String ownerId = value.getNode("id").getValue(TypeToken.of(String.class));
+        return new Group(id, ownerId, name, description, null);
     }
 
     @Override
     public void serialize(TypeToken<?> type, Group obj, ConfigurationNode value) throws ObjectMappingException
     {
-        value.getNode("group-id").setValue(obj.getGroupId());
-        value.getNode("group-name").setValue(obj.getGroupName());
-        value.getNode("owner-id").setValue(obj.getOwnerId());
+        value.getNode("id").setValue(obj.getId());
+        value.getNode("name").setValue(obj.getName());
+        value.getNode("description").setValue(obj.getDescription());
+        value.getNode("id").setValue(obj.getOwnerId());
     }
 }

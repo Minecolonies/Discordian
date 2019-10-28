@@ -1,12 +1,12 @@
 package co.chatchain.dc.configs.formatting.replacements;
 
-import co.chatchain.commons.messages.objects.messages.GenericMessage;
+import co.chatchain.commons.objects.messages.GenericMessageMessage;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 public enum GenericMessageReplacements
 {
-    MESSAGE("message", GenericMessage::getMessage);
+    MESSAGE("message", GenericMessageMessage::getMessage);
 
     @Getter
     final String replacement;
@@ -21,7 +21,7 @@ public enum GenericMessageReplacements
     }
 
     @Nullable
-    public String GetReplacementObject(final GenericMessage genericMessage)
+    public String GetReplacementObject(final GenericMessageMessage genericMessage)
     {
         if (genericMessage == null)
             return null;
@@ -30,7 +30,7 @@ public enum GenericMessageReplacements
     }
 
     @Nullable
-    public static String GetReplacementObject(final GenericMessage genericMessage, final String replacementString)
+    public static String GetReplacementObject(final GenericMessageMessage genericMessage, final String replacementString)
     {
         final GenericMessageReplacements genericMessageReplacement = GetFromReplacement(replacementString);
 
@@ -52,7 +52,7 @@ public enum GenericMessageReplacements
 
     public interface GenericMessageReplacementAction
     {
-        String invoke(final GenericMessage genericMessage);
+        String invoke(final GenericMessageMessage genericMessage);
     }
 
 }

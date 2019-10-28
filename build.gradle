@@ -28,10 +28,10 @@ sourceSets {
 }
 
 repositories {
-    ivy {
-        name 'Minecolonies TeamCity Repo'
-        ivyPattern 'http://teamcity.minecolonies.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'
-        artifactPattern 'http://teamcity.minecolonies.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'
+    mavenLocal()
+    maven {
+        name 'LDTTeam - Modding'
+        url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
     mavenCentral()
     jcenter()
@@ -61,17 +61,7 @@ dependencies {
     //compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
     compile 'io.reactivex.rxjava2:rxjava:2.2.2'
 
-    compile('org:ChatChain_ChatChainCommons_Branches:' + chatChainCommonsVersion) {
-        artifact {
-            name = 'ChatChainCommons-' + chatChainCommonsVersion + '-all'
-            type = 'jar'
-        }
-        artifact {
-            name = 'ChatChainCommons-' + chatChainCommonsVersion + '-sources'
-            type = 'jar'
-            classifier = "sources"
-        }
-    }
+    shadow 'co.chatchain:commons:testing-99992'
 }
 
 shadowJar {

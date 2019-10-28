@@ -1,12 +1,12 @@
 package co.chatchain.dc.configs.formatting;
 
-import co.chatchain.commons.messages.objects.Client;
-import co.chatchain.commons.messages.objects.ClientRank;
-import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.User;
-import co.chatchain.commons.messages.objects.messages.ClientEventMessage;
-import co.chatchain.commons.messages.objects.messages.GenericMessage;
-import co.chatchain.commons.messages.objects.messages.UserEventMessage;
+import co.chatchain.commons.objects.Client;
+import co.chatchain.commons.objects.ClientRank;
+import co.chatchain.commons.objects.ClientUser;
+import co.chatchain.commons.objects.Group;
+import co.chatchain.commons.objects.messages.ClientEventMessage;
+import co.chatchain.commons.objects.messages.GenericMessageMessage;
+import co.chatchain.commons.objects.messages.UserEventMessage;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.formatting.formats.MessageFormats;
 import co.chatchain.dc.configs.formatting.replacements.ClientRankReplacements;
@@ -33,15 +33,15 @@ public class ReplacementUtils
         this.chatChainDC = chatChainDC;
     }
 
-    public String getFormat(final GenericMessage message)
+    public String getFormat(final GenericMessageMessage message)
     {
-        return getFormat(message.getGroup(), message.getSendingClient(), message.getUser(), MessageFormats::getGenericMessage)
+        return getFormat(message.getGroup(), message.getSendingClient(), message.getClientUser(), MessageFormats::getGenericMessage)
                 .replace("{message}", message.getMessage());
     }
 
-    public String getFormat(final GenericMessage message, final Client client)
+    public String getFormat(final GenericMessageMessage message, final Client client)
     {
-        return getFormat(message.getGroup(), client, message.getUser(), MessageFormats::getGenericMessage)
+        return getFormat(message.getGroup(), client, message.getClientUser(), MessageFormats::getGenericMessage)
                 .replace("{message}", message.getMessage());
     }
 
@@ -52,10 +52,10 @@ public class ReplacementUtils
 
     public String getFormat(final UserEventMessage message)
     {
-        return getFormat(message.getGroup(), message.getSendingClient(), message.getUser(), formats -> formats.getUserEventMessages().get(message.getEvent().toUpperCase()));
+        return getFormat(message.getGroup(), message.getSendingClient(), message.getClientUser(), formats -> formats.getUserEventMessages().get(message.getEvent().toUpperCase()));
     }
 
-    public String getFormat(final Group group, final Client client, final User user, final FormatAction action)
+    public String getFormat(final Group group, final Client client, final ClientUser user, final FormatAction action)
     {
         final List<String> format = new ArrayList<>();
 
@@ -111,7 +111,7 @@ public class ReplacementUtils
         return outputStringBuilder.toString();
     }
 
-    private static String getReplacementForSection(final Group group, final Client client, final User user, final String formatsString)
+    private static String getReplacementForSection(final Group group, final Client client, final ClientUser user, final String formatsString)
     {
 
         final Matcher childMatcher = OR_REPLACEMENT.matcher(formatsString);
