@@ -14,7 +14,7 @@ public class GroupTypeSerializer implements TypeSerializer<Group>
         final String id = value.getNode("id").getValue(TypeToken.of(String.class));
         final String name = value.getNode("name").getValue(TypeToken.of(String.class));
         final String description = value.getNode("description").getValue(TypeToken.of(String.class));
-        final String ownerId = value.getNode("id").getValue(TypeToken.of(String.class));
+        final String ownerId = value.getNode("owner-id").getValue(TypeToken.of(String.class));
         return new Group(id, ownerId, name, description, null);
     }
 
@@ -24,6 +24,6 @@ public class GroupTypeSerializer implements TypeSerializer<Group>
         value.getNode("id").setValue(obj.getId());
         value.getNode("name").setValue(obj.getName());
         value.getNode("description").setValue(obj.getDescription());
-        value.getNode("id").setValue(obj.getOwnerId());
+        value.getNode("owner-id").setValue(obj.getOwnerId());
     }
 }
