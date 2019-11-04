@@ -28,7 +28,6 @@ sourceSets {
 }
 
 repositories {
-    mavenLocal()
     maven {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
