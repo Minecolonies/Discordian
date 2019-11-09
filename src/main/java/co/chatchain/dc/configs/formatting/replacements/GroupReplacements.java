@@ -1,13 +1,13 @@
 package co.chatchain.dc.configs.formatting.replacements;
 
-import co.chatchain.commons.messages.objects.Group;
+import co.chatchain.commons.objects.Group;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 public enum GroupReplacements
 {
-    NAME("group-name", Group::getGroupName),
-    ID("group-id", Group::getGroupId),
+    NAME("group-name", Group::getName),
+    ID("group-id", Group::getId),
     OWNER_ID("group-owner-id", Group::getOwnerId);
 
     @Getter

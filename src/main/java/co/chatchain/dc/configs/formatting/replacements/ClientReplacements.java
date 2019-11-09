@@ -1,14 +1,14 @@
 package co.chatchain.dc.configs.formatting.replacements;
 
-import co.chatchain.commons.messages.objects.Client;
+import co.chatchain.commons.objects.Client;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 public enum ClientReplacements
 {
-    NAME("client-name", Client::getClientName),
-    ID("client-id", Client::getClientId),
-    GUID("client-guid", Client::getClientGuid),
+    NAME("client-name", Client::getName),
+    ID("client-id", Client::getId),
+    GUID("client-guid", Client::getId),
     OWNER_ID("client-owner-id", Client::getOwnerId);
 
     @Getter

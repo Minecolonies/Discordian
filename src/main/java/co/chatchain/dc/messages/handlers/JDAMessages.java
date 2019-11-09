@@ -1,8 +1,8 @@
 package co.chatchain.dc.messages.handlers;
 
-import co.chatchain.commons.messages.objects.ClientRank;
-import co.chatchain.commons.messages.objects.User;
-import co.chatchain.commons.messages.objects.messages.GenericMessage;
+import co.chatchain.commons.objects.ClientRank;
+import co.chatchain.commons.objects.ClientUser;
+import co.chatchain.commons.objects.requests.GenericMessageRequest;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import net.dv8tion.jda.core.entities.Role;
@@ -70,11 +70,11 @@ public class JDAMessages extends ListenerAdapter
                 if (event.getGuild().getId().equals("453039954386223145"))
                     System.out.println("User Colour: " + userColour);
 
-                final User user = new User(event.getAuthor().getName(), event.getAuthor().getId(), event.getMember().getNickname(), userColour, ranks);
+                final ClientUser user = new ClientUser(event.getAuthor().getName(), event.getAuthor().getId(), event.getMember().getNickname(), userColour, ranks);
 
-                final GenericMessage message = new GenericMessage(groupConfig.getGroup(), user, event.getMessage().getContentStripped());
+                final GenericMessageRequest request = new GenericMessageRequest(groupConfig.getGroup().getId(), event.getMessage().getContentStripped(), user);
 
-                chatChainDC.getConnection().sendGenericMessage(message);
+                chatChainDC.getConnection().sendGenericMessage(request);
             }
         }
     }

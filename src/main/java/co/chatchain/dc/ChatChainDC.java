@@ -2,9 +2,9 @@ package co.chatchain.dc;
 
 import co.chatchain.commons.AccessTokenResolver;
 import co.chatchain.commons.ChatChainHubConnection;
-import co.chatchain.commons.messages.objects.Client;
-import co.chatchain.commons.messages.objects.Group;
-import co.chatchain.commons.messages.objects.messages.*;
+import co.chatchain.commons.objects.Client;
+import co.chatchain.commons.objects.Group;
+import co.chatchain.commons.objects.requests.ClientEventRequest;
 import co.chatchain.dc.configs.AbstractConfig;
 import co.chatchain.dc.configs.GroupsConfig;
 import co.chatchain.dc.configs.MainConfig;
@@ -39,8 +39,6 @@ import java.nio.file.Path;
 public class ChatChainDC
 {
 
-    private AccessTokenResolver accessToken = null;
-
     @Getter
     private ChatChainHubConnection connection = null;
 
@@ -61,7 +59,6 @@ public class ChatChainDC
 
     @Getter
     private ReplacementUtils replacementUtils;
-    private File configDir;
 
     @Getter
     @Setter
@@ -73,7 +70,7 @@ public class ChatChainDC
     private ChatChainDC()
     {
 
-        configDir = new File(System.getProperty("user.dir") + "/configs/");
+        File configDir = new File(System.getProperty("user.dir") + "/configs/");
 
         if (!configDir.exists())
         {
@@ -104,7 +101,6 @@ public class ChatChainDC
         formattingConfig = getConfig(formattingConfigPath, FormattingConfig.class,
                 GsonConfigurationLoader.builder().setPath(formattingConfigPath).build());
 
-
         final Path advancedFormattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
         advancedFormattingConfig = getConfig(advancedFormattingConfigPath, AdvancedFormattingConfig.class,
                 GsonConfigurationLoader.builder().setPath(advancedFormattingConfigPath).build());
@@ -124,6 +120,7 @@ public class ChatChainDC
 
         jda.addEventListener(new JDAMessages(this));
 
+        AccessTokenResolver accessToken;
         try
         {
             accessToken = new AccessTokenResolver(mainConfig.getClientId(), mainConfig.getClientSecret(), mainConfig.getIdentityUrl());
@@ -134,24 +131,20 @@ public class ChatChainDC
             return;
         }
 
+        final APIMessages apiHandler = new APIMessages(this);
         connection = new ChatChainHubConnection(mainConfig.getApiUrl(), accessToken);
+        connection.onConnection(hub -> {
+            hub.onGenericMessage(apiHandler::ReceiveGenericMessage);
+            hub.onClientEventMessage(apiHandler::ReceiveClientEvent);
+            hub.onUserEventMessage(apiHandler::ReceiveUserEvent);
+
+            apiHandler.ReceiveGroups(hub.sendGetGroups().blockingGet());
+            apiHandler.ReceiveClient(hub.sendGetClient().blockingGet());
+            hub.sendClientEventMessage(new ClientEventRequest("START", null));
+        });
         connection.connect();
 
         System.out.println("Connection Established: " + connection.getConnectionState());
-
-        final APIMessages apiHandler = new APIMessages(this);
-
-        connection.onConnection(hub -> {
-            hub.onGenericMessage(apiHandler::ReceiveGenericMessage, GenericMessage.class);
-            hub.onClientEventMessage(apiHandler::ReceiveClientEvent, ClientEventMessage.class);
-            hub.onUserEventMessage(apiHandler::ReceiveUserEvent, UserEventMessage.class);
-            hub.onGetGroupsResponse(apiHandler::ReceiveGroups, GetGroupsResponse.class);
-            hub.onGetClientResponse(apiHandler::ReceiveClient, GetClientResponse.class);
-
-            hub.sendGetGroups();
-            hub.sendGetClient();
-            hub.sendClientEventMessage(new ClientEventMessage("START"));
-        });
     }
 
     /**
@@ -161,7 +154,6 @@ public class ChatChainDC
      */
     public static void main(String[] args)
     {
-
         new ChatChainDC();
     }
 
