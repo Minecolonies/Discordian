@@ -60,7 +60,7 @@ dependencies {
     //compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
     compile 'io.reactivex.rxjava2:rxjava:2.2.2'
 
-    compile 'co.chatchain:commons:32925'
+    compile 'co.chatchain:commons:32981'
 }
 
 shadowJar {
