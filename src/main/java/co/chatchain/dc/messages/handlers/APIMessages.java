@@ -16,7 +16,7 @@ public class APIMessages
         this.chatChainDC = chatChainDC;
     }
 
-    public void createGroupInConfig(final Group group)
+    private void createGroupInConfig(final Group group)
     {
         if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(group.getId()))
         {

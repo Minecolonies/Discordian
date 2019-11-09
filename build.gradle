@@ -28,7 +28,6 @@ sourceSets {
 }
 
 repositories {
-    mavenLocal()
     maven {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
@@ -61,7 +60,7 @@ dependencies {
     //compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
     compile 'io.reactivex.rxjava2:rxjava:2.2.2'
 
-    shadow 'co.chatchain:commons:testing-99992'
+    shadow 'co.chatchain:commons:32925'
 }
 
 shadowJar {

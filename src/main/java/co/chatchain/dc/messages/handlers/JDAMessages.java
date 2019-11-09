@@ -72,7 +72,7 @@ public class JDAMessages extends ListenerAdapter
 
                 final ClientUser user = new ClientUser(event.getAuthor().getName(), event.getAuthor().getId(), event.getMember().getNickname(), userColour, ranks);
 
-                final GenericMessageRequest request = new GenericMessageRequest(groupConfig.getGroup().getId(), user, event.getMessage().getContentStripped());
+                final GenericMessageRequest request = new GenericMessageRequest(groupConfig.getGroup().getId(), event.getMessage().getContentStripped(), user);
 
                 chatChainDC.getConnection().sendGenericMessage(request);
             }
