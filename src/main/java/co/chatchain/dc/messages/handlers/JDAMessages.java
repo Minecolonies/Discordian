@@ -1,8 +1,8 @@
 package co.chatchain.dc.messages.handlers;
 
-import co.chatchain.commons.objects.ClientRank;
-import co.chatchain.commons.objects.ClientUser;
-import co.chatchain.commons.objects.requests.GenericMessageRequest;
+import co.chatchain.commons.core.entities.ClientRank;
+import co.chatchain.commons.core.entities.ClientUser;
+import co.chatchain.commons.core.entities.requests.GenericMessageRequest;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import net.dv8tion.jda.core.entities.Role;
@@ -12,10 +12,10 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class JDAMessages extends ListenerAdapter
 {
-
     private final ChatChainDC chatChainDC;
 
     public JDAMessages(final ChatChainDC chatChainDC)
@@ -31,34 +31,39 @@ public class JDAMessages extends ListenerAdapter
             return;
         }
 
-        for (final String groupId : chatChainDC.getGroupsConfig().getGroupStorage().keySet())
+        final List<ClientRank> ranks = new ArrayList<>();
+
+        int priority = 0;
+
+        if (event.getMember() != null)
         {
-            final GroupConfig groupConfig = chatChainDC.getGroupsConfig().getGroupStorage().get(groupId);
-
-            if (!groupConfig.isSendChat())
-                continue;
-
-            final List<ClientRank> ranks = new ArrayList<>();
-
-            int priority = 0;
-
-            if (event.getMember() != null && event.getMember().getRoles() != null)
+            final List<Role> roles = event.getMember().getRoles();
+            if (roles != null)
             {
-                for (final Role role : event.getMember().getRoles())
+                for (final Role role : roles)
                 {
-                    String colourHex = null;
-                    if (role.getColor() != null)
-                    {
-                        colourHex = String.format("#%02x%02x%02x", role.getColor().getRed(), role.getColor().getGreen(), role.getColor().getBlue());
-                    }
+                    final int roleColor = role.getColorRaw();
+
+                    final int red = (roleColor >> 16) & 0xFF;
+                    final int green = (roleColor >> 8) & 0xFF;
+                    final int blue = roleColor & 0xFF;
+
+                    String colourHex = String.format("#%02x%02x%02x", red, green, blue);
+
                     final String displayName = role.getName().substring(0, 1).toUpperCase() + role.getName().substring(1);
                     ranks.add(new ClientRank(role.getName(), role.getId(), priority, displayName, colourHex));
 
                     priority++;
                 }
             }
+        }
 
-            if (groupConfig.getChannelMapping().contains(event.getChannel().getId()))
+        for (final Map.Entry<String, GroupConfig> groupEntry : chatChainDC.getGroupsConfig().getGroupStorage().entrySet())
+        {
+            if (!groupEntry.getValue().isSendChat())
+                continue;
+
+            if (groupEntry.getValue().getChannelMapping().contains(event.getChannel().getId()))
             {
                 String userColour = null;
                 final Color userColourObject = event.getMember().getColor();
@@ -72,7 +77,7 @@ public class JDAMessages extends ListenerAdapter
 
                 final ClientUser user = new ClientUser(event.getAuthor().getName(), event.getAuthor().getId(), event.getMember().getNickname(), userColour, ranks);
 
-                final GenericMessageRequest request = new GenericMessageRequest(groupConfig.getGroup().getId(), event.getMessage().getContentStripped(), user);
+                final GenericMessageRequest request = new GenericMessageRequest(groupEntry.getValue().getGroup().getId(), event.getMessage().getContentStripped(), user);
 
                 chatChainDC.getConnection().sendGenericMessage(request);
             }
