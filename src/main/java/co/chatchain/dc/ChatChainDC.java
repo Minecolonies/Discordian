@@ -1,46 +1,43 @@
 package co.chatchain.dc;
 
-import co.chatchain.commons.AccessTokenResolver;
 import co.chatchain.commons.ChatChainHubConnection;
-import co.chatchain.commons.objects.Client;
-import co.chatchain.commons.objects.Group;
-import co.chatchain.commons.objects.requests.ClientEventRequest;
-import co.chatchain.dc.configs.AbstractConfig;
+import co.chatchain.commons.HubModule;
+import co.chatchain.commons.configuration.AbstractConfig;
+import co.chatchain.commons.configuration.ConfigurationModule;
+import co.chatchain.commons.core.CoreModule;
+import co.chatchain.commons.core.entities.Client;
+import co.chatchain.commons.core.entities.Group;
+import co.chatchain.commons.core.entities.requests.ClientEventRequest;
+import co.chatchain.commons.infrastructure.InfrastructureModule;
+import co.chatchain.commons.interfaces.IChatChainHubConnection;
 import co.chatchain.dc.configs.GroupsConfig;
 import co.chatchain.dc.configs.MainConfig;
-import co.chatchain.dc.configs.formatting.AdvancedFormattingConfig;
-import co.chatchain.dc.configs.formatting.FormattingConfig;
-import co.chatchain.dc.configs.formatting.ReplacementUtils;
-import co.chatchain.dc.messages.handlers.APIMessages;
 import co.chatchain.dc.messages.handlers.JDAMessages;
 import co.chatchain.dc.serializers.GroupTypeSerializer;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Our bot's main class. Used for init of QSML modules, and main entry point.
+ * Our bot's main class.
  */
 public class ChatChainDC
 {
 
     @Getter
-    private ChatChainHubConnection connection = null;
+    private IChatChainHubConnection connection = null;
 
     @Getter
     private JDA jda;
@@ -52,17 +49,11 @@ public class ChatChainDC
     private GroupsConfig groupsConfig;
 
     @Getter
-    private FormattingConfig formattingConfig;
-
-    @Getter
-    private AdvancedFormattingConfig advancedFormattingConfig;
-
-    @Getter
-    private ReplacementUtils replacementUtils;
-
-    @Getter
     @Setter
     private Client client;
+
+    @Getter
+    private final Injector injector;
 
     /**
      * The constructor for our bot.
@@ -88,24 +79,23 @@ public class ChatChainDC
 
         System.out.println(mainConfigPath);
 
+        //noinspection UnstableApiUsage
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(Group.class), new GroupTypeSerializer());
 
-        mainConfig = getConfig(mainConfigPath, MainConfig.class,
+        mainConfig = AbstractConfig.getConfig(mainConfigPath, MainConfig.class,
                 GsonConfigurationLoader.builder().setPath(mainConfigPath).build());
 
         final Path groupsConfigPath = configDir.toPath().resolve("groups.json");
-        groupsConfig = getConfig(groupsConfigPath, GroupsConfig.class,
+        groupsConfig = AbstractConfig.getConfig(groupsConfigPath, GroupsConfig.class,
                 GsonConfigurationLoader.builder().setPath(groupsConfigPath).build());
 
-        final Path formattingConfigPath = configDir.toPath().resolve("formatting.json");
-        formattingConfig = getConfig(formattingConfigPath, FormattingConfig.class,
-                GsonConfigurationLoader.builder().setPath(formattingConfigPath).build());
+        Path formattingConfigPath = configDir.toPath().resolve("formatting.json");
+        if (mainConfig.getAdvancedFormatting())
+        {
+            formattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
+        }
 
-        final Path advancedFormattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
-        advancedFormattingConfig = getConfig(advancedFormattingConfigPath, AdvancedFormattingConfig.class,
-                GsonConfigurationLoader.builder().setPath(advancedFormattingConfigPath).build());
-
-        replacementUtils = new ReplacementUtils(this);
+        injector = Guice.createInjector(new HubModule(), new CoreModule(), new InfrastructureModule(), new ConfigurationModule(formattingConfigPath, mainConfig.getAdvancedFormatting()), new ChatChainDCModule(this));
 
         try
         {
@@ -120,29 +110,10 @@ public class ChatChainDC
 
         jda.addEventListener(new JDAMessages(this));
 
-        AccessTokenResolver accessToken;
-        try
-        {
-            accessToken = new AccessTokenResolver(mainConfig.getClientId(), mainConfig.getClientSecret(), mainConfig.getIdentityUrl());
-        }
-        catch (Exception e)
-        {
-            System.out.println("Exception while attempting to get ChatChain Access Token from IdentityServer: " + e);
-            return;
-        }
-
-        final APIMessages apiHandler = new APIMessages(this);
-        connection = new ChatChainHubConnection(mainConfig.getApiUrl(), accessToken);
-        connection.onConnection(hub -> {
-            hub.onGenericMessage(apiHandler::ReceiveGenericMessage);
-            hub.onClientEventMessage(apiHandler::ReceiveClientEvent);
-            hub.onUserEventMessage(apiHandler::ReceiveUserEvent);
-
-            apiHandler.ReceiveGroups(hub.sendGetGroups().blockingGet());
-            apiHandler.ReceiveClient(hub.sendGetClient().blockingGet());
-            hub.sendClientEventMessage(new ClientEventRequest("START", null));
-        });
+        connection = injector.getInstance(ChatChainHubConnection.class);
         connection.connect();
+
+        connection.sendClientEventMessage(new ClientEventRequest("START", null));
 
         System.out.println("Connection Established: " + connection.getConnectionState());
     }
@@ -155,29 +126,5 @@ public class ChatChainDC
     public static void main(String[] args)
     {
         new ChatChainDC();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <M extends AbstractConfig> M getConfig(Path file, Class<M> clazz, ConfigurationLoader loader)
-    {
-        try
-        {
-            if (!file.toFile().exists())
-            {
-                Files.createFile(file);
-            }
-
-            TypeToken token = TypeToken.of(clazz);
-            ConfigurationNode node = loader.load(ConfigurationOptions.defaults());
-            M config = (M) node.getValue(token, clazz.newInstance());
-            config.init(loader, node, token);
-            config.save();
-            return config;
-        } catch (IOException | ObjectMappingException | IllegalAccessException | InstantiationException e)
-        {
-            System.out.println("Getting the config failed");
-            e.printStackTrace();
-            return null;
-        }
     }
 }

@@ -1,11 +1,12 @@
 package co.chatchain.dc.serializers;
 
-import co.chatchain.commons.objects.Group;
+import co.chatchain.commons.core.entities.Group;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
+@SuppressWarnings("UnstableApiUsage")
 public class GroupTypeSerializer implements TypeSerializer<Group>
 {
     @Override
@@ -19,7 +20,7 @@ public class GroupTypeSerializer implements TypeSerializer<Group>
     }
 
     @Override
-    public void serialize(TypeToken<?> type, Group obj, ConfigurationNode value) throws ObjectMappingException
+    public void serialize(TypeToken<?> type, Group obj, ConfigurationNode value)
     {
         value.getNode("id").setValue(obj.getId());
         value.getNode("name").setValue(obj.getName());

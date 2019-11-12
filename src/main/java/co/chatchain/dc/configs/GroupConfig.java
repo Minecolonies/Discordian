@@ -1,6 +1,6 @@
 package co.chatchain.dc.configs;
 
-import co.chatchain.commons.objects.Group;
+import co.chatchain.commons.core.entities.Group;
 import lombok.Getter;
 import lombok.Setter;
 import ninja.leaping.configurate.objectmapping.Setting;
