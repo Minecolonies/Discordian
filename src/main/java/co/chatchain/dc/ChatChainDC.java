@@ -7,7 +7,6 @@ import co.chatchain.commons.configuration.ConfigurationModule;
 import co.chatchain.commons.core.CoreModule;
 import co.chatchain.commons.core.entities.Client;
 import co.chatchain.commons.core.entities.Group;
-import co.chatchain.commons.core.entities.requests.ClientEventRequest;
 import co.chatchain.commons.infrastructure.InfrastructureModule;
 import co.chatchain.commons.interfaces.IChatChainHubConnection;
 import co.chatchain.dc.configs.GroupsConfig;
@@ -112,8 +111,6 @@ public class ChatChainDC
 
         connection = injector.getInstance(ChatChainHubConnection.class);
         connection.connect();
-
-        connection.sendClientEventMessage(new ClientEventRequest("START", null));
 
         System.out.println("Connection Established: " + connection.getConnectionState());
     }
