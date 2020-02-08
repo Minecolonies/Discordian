@@ -47,4 +47,18 @@ public class MessageSender implements IMessageSender
         System.out.println("New Message: " + message);
         return true;
     }
+
+    @Override
+    public boolean sendStatsMessage(String message, String responseLocation)
+    {
+        if (message == null)
+            return false;
+
+        if (chatChainDC.getJda().getTextChannelById(responseLocation).canTalk())
+        {
+            chatChainDC.getJda().getTextChannelById(responseLocation).sendMessage(message).queue();
+        }
+
+        return false;
+    }
 }
