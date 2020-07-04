@@ -2,7 +2,9 @@ package co.chatchain.dc.cases.stats;
 
 import co.chatchain.commons.core.entities.ClientUser;
 import co.chatchain.commons.core.entities.messages.stats.StatsResponseMessage;
-import co.chatchain.commons.core.interfaces.cases.stats.IReceiveStatsResponseCase;
+import co.chatchain.commons.core.interfaces.IMessageSender;
+import co.chatchain.commons.core.interfaces.formatters.stats.IStatsResponseFormatter;
+import co.chatchain.commons.interfaces.IChatChainHubConnection;
 import co.chatchain.dc.ChatChainDC;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -11,26 +13,31 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import javax.inject.Inject;
 import java.util.Arrays;
 
-public class ReceiveStatsResponseCase implements IReceiveStatsResponseCase
+public class ReceiveStatsResponseCase extends co.chatchain.commons.core.cases.stats.ReceiveStatsResponseCase
 {
-
-    private final ChatChainDC chatChainDC;
+    private final ChatChainDC             chatChainDC;
 
     @Inject
-    public ReceiveStatsResponseCase(final ChatChainDC chatChainDC)
+    public ReceiveStatsResponseCase(final IChatChainHubConnection chatChainHubConnection, final IMessageSender messageSender, final IStatsResponseFormatter statsResponseFormatter, final ChatChainDC chatChainDC)
     {
+        super(chatChainHubConnection, messageSender, statsResponseFormatter);
         this.chatChainDC = chatChainDC;
     }
 
     @Override
     public boolean handle(final StatsResponseMessage message)
     {
-        final String channelId = chatChainDC.getStatsRequestsCache().getIfPresent(message.getRequestId());
-        if (channelId != null)
+        if (!chatChainDC.getMainConfig().getStatsEmbed())
         {
-            TextChannel channel = chatChainDC.getJda().getTextChannelById(channelId);
+            return super.handle(message);
+        }
 
-            if (channel.canTalk())
+        final String responseLocation = chatChainHubConnection.getStatsRequest(message.getRequestId());
+        if (responseLocation != null)
+        {
+            TextChannel channel = chatChainDC.getJda().getTextChannelById(responseLocation);
+
+            if (chatChainDC.getJda().getTextChannelById(responseLocation).canTalk())
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 MessageBuilder messageBuilder = new MessageBuilder();
@@ -59,8 +66,6 @@ public class ReceiveStatsResponseCase implements IReceiveStatsResponseCase
 
                 channel.sendMessage(embedBuilder.build()).queue();
             }
-
-            chatChainDC.getStatsRequestsCache().invalidate(message.getRequestId());
         }
         return false;
     }

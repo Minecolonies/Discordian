@@ -107,7 +107,7 @@ public class ChatChainDC
             formattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
         }
 
-        injector = Guice.createInjector(new HubModule(), new CoreModule(), new InfrastructureModule(), new ConfigurationModule(formattingConfigPath.toFile(), mainConfig.getAdvancedFormatting()), new ChatChainDCModule(this));
+        injector = Guice.createInjector(new HubModule(), new InfrastructureModule(), new ConfigurationModule(formattingConfigPath.toFile(), mainConfig.getAdvancedFormatting()), new ChatChainDCModule(this));
 
         try
         {
@@ -115,7 +115,7 @@ public class ChatChainDC
 
             builder.setPrefix("!");
             builder.setAlternativePrefix("!ccdc");
-            builder.setOwnerId("");
+            builder.setOwnerId("000000000000000000");
 
             builder.addCommand(new StatsCommand(this));
 

@@ -90,6 +90,12 @@ public class MainConfig extends AbstractConfig implements IConnectionConfig
     @Setting("advanced-formatting")
     private Boolean advancedFormatting = false;
 
+    //####### Use Stats Embed #######\\
+
+    @Getter
+    @Setting("stats-embed")
+    private Boolean statsEmbed = true;
+
     private String getSystemValueOrConfigValue(final String systemValue, String configValue)
     {
         final String value = System.getenv(systemValue);

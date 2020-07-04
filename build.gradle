@@ -12,8 +12,6 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
-mainClassName = "co.chatchain.dc.ChatChainDC"
-
 def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
 
 sourceSets {
@@ -59,7 +57,7 @@ dependencies {
 
     compile 'io.reactivex.rxjava2:rxjava:2.2.2'
 
-    compile 'co.chatchain:commons:feature-stats#12'
+    compile 'co.chatchain:commons:feature-stats#13'
 }
 
 shadowJar {
