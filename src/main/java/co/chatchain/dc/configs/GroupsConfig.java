@@ -1,6 +1,5 @@
 package co.chatchain.dc.configs;
 
-import co.chatchain.commons.configuration.AbstractConfig;
 import lombok.Getter;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;

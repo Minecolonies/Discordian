@@ -12,8 +12,6 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
-mainClassName = "co.chatchain.dc.ChatChainDC"
-
 def qsmlDep = 'uk.co.drnaylor:quickstart-moduleloader:0.8.2'
 
 sourceSets {
@@ -44,24 +42,22 @@ repositories {
 dependencies {
     compile('org.jetbrains:annotations:15.0')
 
-    //testCompile(group: 'junit', name: 'junit', version: '4.12')
     compile('net.dv8tion:JDA:3.6.0_354')
+    compile('com.jagrosh:jda-utilities-command:2.1')
 
     compile('org.slf4j:slf4j-api:1.7.25')
     compile('org.slf4j:slf4j-jdk14:1.7.25')
     compileOnly('org.projectlombok:lombok:1.16.18')
     apt('org.projectlombok:lombok:1.16.18')
     compile('ninja.leaping.configurate:configurate-gson:3.3')
-    //compile('org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5')
 
     compile 'org.java-websocket:Java-WebSocket:1.3.4'
 
     compile('com.jagrosh:jda-utilities-command:2.1')
 
-    //compile 'com.microsoft.signalr:signalr:3.0.0-preview-18579-0056'
     compile 'io.reactivex.rxjava2:rxjava:2.2.2'
 
-    compile 'co.chatchain:commons:33267'
+    compile 'co.chatchain:commons:42978'
 }
 
 shadowJar {

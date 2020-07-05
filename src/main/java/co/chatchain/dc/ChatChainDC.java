@@ -2,20 +2,24 @@ package co.chatchain.dc;
 
 import co.chatchain.commons.ChatChainHubConnection;
 import co.chatchain.commons.HubModule;
-import co.chatchain.commons.configuration.AbstractConfig;
 import co.chatchain.commons.configuration.ConfigurationModule;
 import co.chatchain.commons.core.CoreModule;
 import co.chatchain.commons.core.entities.Client;
 import co.chatchain.commons.core.entities.Group;
 import co.chatchain.commons.infrastructure.InfrastructureModule;
 import co.chatchain.commons.interfaces.IChatChainHubConnection;
+import co.chatchain.dc.commands.StatsCommand;
+import co.chatchain.dc.configs.AbstractConfig;
 import co.chatchain.dc.configs.GroupsConfig;
 import co.chatchain.dc.configs.MainConfig;
 import co.chatchain.dc.messages.handlers.JDAMessages;
 import co.chatchain.dc.serializers.GroupTypeSerializer;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.AccountType;
@@ -28,6 +32,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Our bot's main class.
@@ -53,6 +58,14 @@ public class ChatChainDC
 
     @Getter
     private final Injector injector;
+
+    /**
+     * KV map of RequestIDs to Channel IDs
+     */
+    @Getter
+    private final Cache<String, String> statsRequestsCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.MINUTES)
+            .build();
 
     /**
      * The constructor for our bot.
@@ -94,11 +107,22 @@ public class ChatChainDC
             formattingConfigPath = configDir.toPath().resolve("advanced-formatting.json");
         }
 
-        injector = Guice.createInjector(new HubModule(), new CoreModule(), new InfrastructureModule(), new ConfigurationModule(formattingConfigPath, mainConfig.getAdvancedFormatting()), new ChatChainDCModule(this));
+        injector = Guice.createInjector(new HubModule(), new InfrastructureModule(), new ConfigurationModule(formattingConfigPath.toFile(), mainConfig.getAdvancedFormatting()), new ChatChainDCModule(this));
 
         try
         {
-            jda = new JDABuilder(AccountType.BOT).setToken(mainConfig.getDiscordClientId()).buildBlocking();
+            CommandClientBuilder builder = new CommandClientBuilder();
+
+            builder.setPrefix("!");
+            builder.setAlternativePrefix("!ccdc");
+            builder.setOwnerId("000000000000000000");
+
+            builder.addCommand(new StatsCommand(this));
+
+            jda = new JDABuilder(AccountType.BOT)
+                    .setToken(mainConfig.getDiscordClientId())
+                    .addEventListener(builder.build())
+                    .buildBlocking();
         }
         catch (LoginException | InterruptedException e)
         {
