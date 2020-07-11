@@ -96,6 +96,24 @@ public class MainConfig extends AbstractConfig implements IConnectionConfig
     @Setting("stats-embed")
     private Boolean statsEmbed = true;
 
+    //####### Create Channels for New Groups #######\\
+
+    @Getter
+    @Setting("create-channels-for-new-groups")
+    private Boolean createChannels = false;
+
+    //####### Discord Server for New Channels #######\\
+
+    @Getter
+    @Setting("discord-server-for-new-channels")
+    private long newChannelServerId = 100000000000000000L;
+
+    //####### Category for New Channels #######\\
+
+    @Getter
+    @Setting("discord-server-for-new-channels")
+    private long newChannelCategory = 100000000000000000L;
+
     private String getSystemValueOrConfigValue(final String systemValue, String configValue)
     {
         final String value = System.getenv(systemValue);

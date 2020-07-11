@@ -44,8 +44,6 @@ public class ChatChainDCModule extends AbstractModule
         bind(IReceiveGenericMessageCase.class).to(ReceiveGenericMessageCase.class);
         bind(IReceiveUserEventCase.class).to(ReceiveUserEventCase.class);
         bind(IReceiveStatsResponseCase.class).to(ReceiveStatsResponseCase.class);
-
-
     }
 
     private static class Logger implements ILogger

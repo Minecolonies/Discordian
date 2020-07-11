@@ -3,7 +3,7 @@ package co.chatchain.dc.messages.handlers;
 import co.chatchain.commons.core.entities.Group;
 import co.chatchain.commons.core.interfaces.IMessageSender;
 import co.chatchain.dc.ChatChainDC;
-import co.chatchain.dc.configs.GroupConfig;
+import co.chatchain.dc.cases.ReceiveGroupsCase;
 
 import javax.inject.Inject;
 
@@ -17,21 +17,10 @@ public class MessageSender implements IMessageSender
         this.chatChainDC = chatChainDC;
     }
 
-    private void createGroupInConfig(final Group group)
-    {
-        if (!chatChainDC.getGroupsConfig().getGroupStorage().containsKey(group.getId()))
-        {
-            GroupConfig config = new GroupConfig();
-            config.setGroup(group);
-            chatChainDC.getGroupsConfig().getGroupStorage().put(group.getId(), config);
-            chatChainDC.getGroupsConfig().save();
-        }
-    }
-
     @Override
     public boolean sendMessage(final String message, final Group group)
     {
-        createGroupInConfig(group);
+        ReceiveGroupsCase.AddGroupToConfig(chatChainDC, group);
 
         if (message == null)
             return false;
