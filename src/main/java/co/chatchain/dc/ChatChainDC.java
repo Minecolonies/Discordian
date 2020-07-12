@@ -3,7 +3,6 @@ package co.chatchain.dc;
 import co.chatchain.commons.ChatChainHubConnection;
 import co.chatchain.commons.HubModule;
 import co.chatchain.commons.configuration.ConfigurationModule;
-import co.chatchain.commons.core.CoreModule;
 import co.chatchain.commons.core.entities.Client;
 import co.chatchain.commons.core.entities.Group;
 import co.chatchain.commons.infrastructure.InfrastructureModule;
@@ -22,9 +21,8 @@ import com.google.inject.Injector;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import lombok.Getter;
 import lombok.Setter;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
@@ -119,12 +117,11 @@ public class ChatChainDC
 
             builder.addCommand(new StatsCommand(this));
 
-            jda = new JDABuilder(AccountType.BOT)
-                    .setToken(mainConfig.getDiscordClientId())
-                    .addEventListener(builder.build())
-                    .buildBlocking();
+            jda = JDABuilder.createDefault(mainConfig.getDiscordClientId())
+              .addEventListeners(builder.build())
+              .build();
         }
-        catch (LoginException | InterruptedException e)
+        catch (LoginException e)
         {
             System.out.println("Could not initiate discord connection");
             e.printStackTrace();

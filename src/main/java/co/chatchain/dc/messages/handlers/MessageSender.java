@@ -4,6 +4,7 @@ import co.chatchain.commons.core.entities.Group;
 import co.chatchain.commons.core.interfaces.IMessageSender;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.cases.ReceiveGroupsCase;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.inject.Inject;
 
@@ -27,9 +28,10 @@ public class MessageSender implements IMessageSender
 
         for (final String channelId : chatChainDC.getGroupsConfig().getGroupStorage().get(group.getId()).getChannelMapping())
         {
-            if (chatChainDC.getJda().getTextChannelById(channelId).canTalk())
+            TextChannel channel = chatChainDC.getJda().getTextChannelById(channelId);
+            if (channel != null && channel.canTalk())
             {
-                chatChainDC.getJda().getTextChannelById(channelId).sendMessage(message).queue();
+                channel.sendMessage(message).queue();
             }
         }
 
@@ -43,9 +45,10 @@ public class MessageSender implements IMessageSender
         if (message == null)
             return false;
 
-        if (chatChainDC.getJda().getTextChannelById(responseLocation).canTalk())
+        TextChannel channel = chatChainDC.getJda().getTextChannelById(responseLocation);
+        if (channel != null && channel.canTalk())
         {
-            chatChainDC.getJda().getTextChannelById(responseLocation).sendMessage(message).queue();
+            channel.sendMessage(message).queue();
         }
 
         return false;

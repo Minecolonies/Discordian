@@ -6,9 +6,9 @@ import co.chatchain.commons.core.interfaces.cases.IReceiveGroupsCase;
 import co.chatchain.dc.ChatChainDC;
 import co.chatchain.dc.configs.GroupConfig;
 import co.chatchain.dc.configs.GroupsConfig;
-import net.dv8tion.jda.core.entities.Category;
-import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Category;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
@@ -37,35 +37,38 @@ public class ReceiveGroupsCase implements IReceiveGroupsCase
         {
             if (!groupsConfig.getGroupStorage().containsKey(group.getId()))
             {
-                Channel channel = null;
+                TextChannel channel = null;
                 if (chatChainDC.getMainConfig().getCreateChannels())
                 {
                     Guild guild = chatChainDC.getJda().getGuildById(chatChainDC.getMainConfig().getNewChannelServerId());
-                    if (chatChainDC.getMainConfig().getNewChannelCategory() != 100000000000000000L)
+                    if (guild != null)
                     {
                         Category category = guild.getCategoryById(chatChainDC.getMainConfig().getNewChannelCategory());
-                        try
+                        if (category != null && group.getName() != null)
                         {
-                            channel = category.createTextChannel(group.getName())
-                                        .setTopic(group.getDescription())
-                                        .submit().get();
+                            try
+                            {
+                                channel = category.createTextChannel(group.getName() == null ? "chatchain" : group.getName())
+                                            .setTopic(group.getDescription())
+                                            .submit().get();
+                            }
+                            catch (InterruptedException | ExecutionException e)
+                            {
+                                e.printStackTrace();
+                            }
                         }
-                        catch (InterruptedException | ExecutionException e)
+                        else
                         {
-                            e.printStackTrace();
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            channel = guild.getController().createTextChannel(group.getName() == null ? "chatchain" : group.getName())
-                                        .setTopic(group.getDescription())
-                                        .submit().get();
-                        }
-                        catch (InterruptedException | ExecutionException e)
-                        {
-                            e.printStackTrace();
+                            try
+                            {
+                                channel = guild.createTextChannel(group.getName() == null ? "chatchain" : group.getName())
+                                            .setTopic(group.getDescription())
+                                            .submit().get();
+                            }
+                            catch (InterruptedException | ExecutionException e)
+                            {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

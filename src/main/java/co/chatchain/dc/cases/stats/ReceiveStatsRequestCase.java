@@ -30,7 +30,7 @@ public class ReceiveStatsRequestCase implements IReceiveStatsRequestCase
 
         if (message.getStatsSection() == null || message.getStatsSection().equals("performance"))
         {
-            statsObject.setPerformance(Long.toString(chatChainDC.getJda().getPing()));
+            statsObject.setPerformance(Long.toString(chatChainDC.getJda().getGatewayPing()));
             statsObject.setPerformanceName("ping");
         }
 

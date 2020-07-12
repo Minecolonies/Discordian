@@ -6,9 +6,9 @@ import co.chatchain.commons.core.interfaces.IMessageSender;
 import co.chatchain.commons.core.interfaces.formatters.stats.IStatsResponseFormatter;
 import co.chatchain.commons.interfaces.IChatChainHubConnection;
 import co.chatchain.dc.ChatChainDC;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class ReceiveStatsResponseCase extends co.chatchain.commons.core.cases.st
         {
             TextChannel channel = chatChainDC.getJda().getTextChannelById(responseLocation);
 
-            if (chatChainDC.getJda().getTextChannelById(responseLocation).canTalk())
+            if (channel != null && channel.canTalk())
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 MessageBuilder messageBuilder = new MessageBuilder();
